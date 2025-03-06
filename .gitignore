@@ -1,3 +1,6 @@
 seoseong_ida/settings.py
 db.sqlite3
-__pycache__/
+seoseong_ida/__pycache__
+app/migrations/__pycache__
+app/__pycache__
+app/views/__pycache__
