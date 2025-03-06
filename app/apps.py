@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class MainscreenConfig(AppConfig):
+class appConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "mainscreen"
+    name = "app"
