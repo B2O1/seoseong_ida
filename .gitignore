@@ -1,2 +1,3 @@
 seoseong_ida/settings.py
 db.sqlite3
+__pycache__/
