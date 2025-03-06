@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include("app.urls"))
+    # 페이지 렌더링
+    path('', include('app.urls'))
 ]
