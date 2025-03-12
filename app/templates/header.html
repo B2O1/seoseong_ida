@@ -1,55 +1,42 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Seoseong_ida</title>
-        <link rel="stylesheet" href="../css/header.css">
-        <script>
-            function openPopup(){
-                var url = "grid.html";
-                var name = "팝업창의 이름";
-                var option = "width = 500, height = 500, top = 100, left = 200, location = no"
-                window.open(url, name, option);
-            }
-        </script>    
-    </head>
-    <body>
-        <section class="header">
-            <div class="left-section">
-                <div class="title">
-                    서성이다
-                </div>
-                <div class="sub-title">
-                    니들이 카페를 알아?
-                </div>
-            </div>
-            <div class="middle-section">
-                <div class="map">
-                    지도로 찾기
-                </div>
-                <div class="menu">
-                    메뉴로 찾기
-                </div>
-                <div class="category">
-                    카테고리로 찾기
-                </div>
-                <div class="keyword">
-                   아무거나
-                </div>
-            </div>
-            <div class="right-section">
-                <div class="FAQ">
-                    문의
-                </div>
-                <div class="login">
-                    로그인
-                </div>
-                <div class="createaccount">
-                    회원가입
-                </div>
-            </div>
-        </section>
-        <div class="middle-bar">
-            <input class="search-bar" type="text" placeholder="어떤 카페가 좋을까?" onClick="openPopup()"">
-        </div>
-</body>
+  <head>
+    <title>Seoseong_ida</title>
+    <link rel="stylesheet" href="../css/header.css" />
+    <script>
+      /*function openPopup() {
+        var name = '_parent';
+        var url = 'home_search.html';
+        window.open(url, name);
+      }*/
+      function showSuggestions() {
+        document.getElementById('suggestions').classList.remove('hidden');
+      }
+
+      function hideSuggestions() {
+        setTimeout(() => {
+          document.getElementById('suggestions').classList.add('hidden');
+        }, 200); // 200ms 딜레이 추가 (추천 태그 클릭 방지)
+      }
+    </script>
+  </head>
+  <body>
+    <section class="header">
+      <div class="left-section">
+        <div class="title">서성이다</div>
+        <div class="sub-title">니들이 카페를 알아?</div>
+      </div>
+      <div class="middle-section">
+        <div class="map">지도로 찾기</div>
+        <div class="menu">메뉴로 찾기</div>
+        <div class="category">카테고리로 찾기</div>
+        <div class="keyword">아무거나</div>
+      </div>
+      <div class="right-section">
+        <div class="FAQ">문의</div>
+        <div class="login">로그인</div>
+        <div class="createaccount">회원가입</div>
+      </div>
+    </section>
+  </body>
 </html>

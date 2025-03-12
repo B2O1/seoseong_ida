@@ -1,19 +1,19 @@
 html,
-body{
-    height: 100vh;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
+body {
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
-.header{
-    display: block;
-    width: 100%;
-    height: 35vh;
+.header {
+  display: block;
+  width: 100%;
+  height: 20vh;
+  flex-shrink: 0;
 }
 
-
-.header-body{
-    position: relative;
-    width: 100%;
-    height: 100vh;
+.header-body {
+  position: relative;
+  width: 100%;
+  height: 100vh;
 }
