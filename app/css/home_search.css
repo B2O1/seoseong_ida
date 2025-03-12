@@ -1,0 +1,59 @@
+html,
+body {
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 35vh;
+  background: rgba(91, 67, 0, 0.2); /* 연한 검은색 배경 */
+  filter: blur(3px); /* 블러 효과 추가 */
+}
+main {
+  position: relative;
+  margin-top: 35vh;
+  height: 65vh;
+  background: rgb(255, 255, 255); /* 핑크색 */
+}
+
+.button-grid {
+  display: flex; /* Flexbox 사용 */
+  flex-wrap: wrap; /* 화면이 작으면 자동 줄바꿈 */
+  gap: 10px; /* 버튼 간격 */
+}
+
+.tag-btn {
+  display: inline-flex; /* 내부 아이콘과 텍스트 정렬을 위한 flex */
+  align-items: center;
+  justify-content: center;
+  padding: 10px 15px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 13px;
+  background-color: #f1f3f5;
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+  white-space: nowrap; /* 버튼 내 텍스트 줄바꿈 방지 */
+  min-width: 120px; /* 최소 너비 설정 */
+}
+
+/* 숫자 스타일 */
+.tag-btn span {
+  font-size: 12px;
+  color: #888;
+  margin-left: 5px;
+}
+
+/* 호버 효과 */
+.tag-btn:hover {
+  background-color: #e9ecef;
+}
