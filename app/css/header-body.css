@@ -188,7 +188,9 @@
 } */
 
 .search-container {
+  /* 검색창을 기준으로 팝업이 배치될 수 있도록 부모 컨테이너에 position: relative; 적용*/
   display: flex;
+  justify-content: center;
 }
 
 .search-bar {
@@ -211,7 +213,7 @@
   position: absolute;
   top: 50px; /* 검색창 아래 */
   left: 50%; /* 중앙 정렬 */
-  transform: translateX(-50%); /* 가로 기준으로 중앙 배치 */
+  transform: translateX(-50%); /*가로 기준으로 중앙 배치 */
   width: 90%; /* 화면이 작을 때는 90% 사용 */
   max-width: 1700px; /* 너무 넓어지지 않도록 제한 */
   background: white;
@@ -277,4 +279,10 @@
 /* 호버 효과 */
 .tag-btn:hover {
   background-color: #e9ecef;
+}
+
+.tag-btn.selected {
+  background-color: #ffcc00; /* 노란색 배경 */
+  color: black;
+  font-weight: bold;
 }
