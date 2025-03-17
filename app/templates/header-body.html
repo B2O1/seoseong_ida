@@ -1,84 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>header-body</title>
     <link rel="stylesheet" href="../css/header-body.css">
-        <script>
-          /*function openPopup() {
-            var name = '_parent';
-            var url = 'home_search.html';
-            window.open(url, name);
-          }*/
-          function showSuggestions() {
-            document.getElementById("searchSuggestions").classList.remove("hidden");
-          }
-
-          function hideSuggestions() {
-            setTimeout(() => {
-              document.getElementById("searchSuggestions").classList.add("hidden");
-            }, 200); // 클릭 가능하게 약간의 딜레이 추가
-          }
-      </script>
   </head>
     <body>
-        <div class="search-container">
-          <input
-            class="search-bar"
-            type="text"
-            placeholder="어떤 카페가 좋을까?"
-            onclick="showSuggestions()"
-            onblur="hideSuggestions()"
-          />
-
-          <main id="searchSuggestions" class="suggestion-box hidden">
-              <div id="container_who">
-                <h3>누구와 함께 하나요?</h3>
-                <div>
-                  <button class="tag-btn">🧑‍🤝‍🧑 친구랑 <span>(14)</span></button>
-                  <button class="tag-btn">👩‍❤️‍👨 연인이랑 <span>(14)</span></button>
-                  <button class="tag-btn">👨‍👩‍👧‍👦 가족이랑 <span>(9)</span></button>
-                  <button class="tag-btn">🐶 반려동물과 함께 <span>(7)</span></button>
-                  <button class="tag-btn">👤 혼자서 <span>(7)</span></button>
-                  <button class="tag-btn">👥 단체로 <span>(4)</span></button>
-                  <button class="tag-btn">🌍 외국인 친구와 <span>(3)</span></button>
-                </div>
-              </div>
-
-              <div id="container_what">
-                <h3>무엇을 하나요?</h3>
-                <div>
-                  <button class="tag-btn">🍰 디저트 먹기 <span>(14)</span></button>
-                  <button class="tag-btn">☕ 커피 마시기 <span>(14)</span></button>
-                  <button class="tag-btn">💻 공부하기 <span>(9)</span></button>
-                  <button class="tag-btn">📖 책 읽기 <span>(7)</span></button>
-                  <button class="tag-btn">💬 수다 떨기 <span>(7)</span></button>
-                  <button class="tag-btn">🏡 한옥 감성 즐기기 <span>(4)</span></button>
-                  <button class="tag-btn">🐾 반려동물과 함께하기 <span>(3)</span></button>
-                  <button class="tag-btn">💰 가성비 좋은 곳 찾기 <span>(3)</span></button>
-                  <button class="tag-btn">🔍 숨겨진 카페 찾기 <span>(3)</span></button>
-                  <button class="tag-btn">🚻 화장실 청결한 곳 찾기 <span>(3)</span></button>
-                </div>
-              </div>
-
-              <div id="container_special">
-                <h3>분위기와 특징</h3>
-                <div>
-                  <button class="tag-btn">✨ 분위기 좋은 <span>(4)</span></button>
-                  <button class="tag-btn">🏡 한옥 감성 <span>(3)</span></button>
-                  <button class="tag-btn">🍽️ 빵이 맛있는 <span>(3)</span></button>
-                  <button class="tag-btn">🍰 케이크가 맛있는 <span>(3)</span></button>
-                  <button class="tag-btn">☕ 커피가 맛있는 <span>(3)</span></button>
-                  <button class="tag-btn">📚 공부하기 좋은 <span>(4)</span></button>
-                  <button class="tag-btn">🛋️ 쾌적한 <span>(3)</span></button>
-                  <button class="tag-btn">🎶 조용한 <span>(3)</span></button>
-                  <button class="tag-btn">🥇 올타임 베스트 <span>(3)</span></button>
-                  <button class="tag-btn">🚀 주말 피해야 하는 <span>(3)</span></button>
-                  <button class="tag-btn">🕵️ 숨겨진 나만의 공간 <span>(3)</span></button>
-                  <button class="tag-btn">🐾 반려동물과 함께 <span>(3)</span></button>
-                  <button class="tag-btn">🥛 우유 변경 가능 <span>(3)</span></button>
-                </div>
-              </div>
-            </main>
-    </div>
         <main class = 'main-container'>
             <div class='wrapper'>
               <div class='carousel'>
