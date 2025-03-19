@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS만으로 선택한 버튼 내용 표시</title>
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .search-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: blue;
+            margin-bottom: 20px;
+            min-height: 24px; /* 선택된 내용 없을 때 높이 유지 */
+        }
+
+        .group {
+            margin-bottom: 20px;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        label {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: 2px solid black;
+            background-color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        input[type="radio"]:checked + label {
+            background-color: blue;
+            color: white;
+        }
+
+        /* 선택된 버튼의 내용을 검색창 위에 표시 */
+        .search-display::before {
+            content: attr(data-default);
+        }
+
+        #btn1:checked ~ .search-display::before {
+            content: "그룹 1 - 버튼 1";
+        }
+
+        #btn2:checked ~ .search-display::before {
+            content: "그룹 1 - 버튼 2";
+        }
+
+        #btn3:checked ~ .search-display::before {
+            content: "그룹 1 - 버튼 3";
+        }
+
+        #btn4:checked ~ .search-display::before {
+            content: "그룹 2 - 버튼 1";
+        }
+
+        #btn5:checked ~ .search-display::before {
+            content: "그룹 2 - 버튼 2";
+        }
+
+        #btn6:checked ~ .search-display::before {
+            content: "그룹 2 - 버튼 3";
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 검색창 위에 선택된 버튼 내용 표시 -->
+        <div class="search-display" data-default="여기에 선택한 내용이 표시됩니다"></div>
+
+        <div class="group">
+            <input type="radio" id="btn1" name="group1">
+            <label for="btn1">그룹 1 - 버튼 1</label>
+
+            <input type="radio" id="btn2" name="group1">
+            <label for="btn2">그룹 1 - 버튼 2</label>
+
+            <input type="radio" id="btn3" name="group1">
+            <label for="btn3">그룹 1 - 버튼 3</label>
+        </div>
+
+        <div class="group">
+            <input type="radio" id="btn4" name="group2">
+            <label for="btn4">그룹 2 - 버튼 1</label>
+
+            <input type="radio" id="btn5" name="group2">
+            <label for="btn5">그룹 2 - 버튼 2</label>
+
+            <input type="radio" id="btn6" name="group2">
+            <label for="btn6">그룹 2 - 버튼 3</label>
+        </div>
+    </div>
+
+</body>
+</html>
