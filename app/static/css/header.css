@@ -1,0 +1,71 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 20px;
+}
+
+/* 왼쪽 섹션 (제목 부분) */
+.left-section {
+  display: flex;
+  flex-direction: column; /* 세로 정렬 유지 */
+  align-items: flex-start; /* 왼쪽 정렬 */
+  justify-content: center;
+  min-width: 150px; /* 가변적인 너비 유지 */
+  margin-right: 20px; /* 중간 섹션과 간격 추가 */
+}
+
+/* 가운데 섹션 (메뉴) */
+.middle-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 가운데 정렬 */
+  height: 50px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+/* 오른쪽 섹션 (로그인, 회원가입) */
+.right-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 50px;
+}
+
+/* 제목과 부제목 스타일 */
+.title {
+  font-size: 24px; /* 크기 조정 */
+  font-weight: bold;
+  margin-bottom: 4px; /* 부제목과 간격 추가 */
+}
+
+.sub-title {
+  font-size: 12px;
+  color: gray;
+}
+
+/* 네비게이션 메뉴 스타일 */
+.map,
+.menu,
+.category,
+.keyword {
+  padding: 10px;
+  margin: 0 10px;
+}
+
+.FAQ,
+.login,
+.createaccount {
+  padding: 5px;
+  margin: 0 5px;
+}
+
+/* 링크 스타일 */
+a {
+  text-decoration: none;
+  color: inherit;
+}
