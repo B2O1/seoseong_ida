@@ -84,17 +84,18 @@
   font-size: 16px;
 }*/
 
-.suggestion-box {
+/*.suggestion-box {
   position: absolute;
-  top: 40px; /* 검색창 아래로 배치 */
+  top: 40px; 검색창 아래로 배치
   left: 0;
-  width: 100%;
+  width: 90%;
   background: white;
   border: 1px solid #ddd;
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 10px;
+  padding: 20px;
   z-index: 1000;
+  text-align: center;
 }
 
 .suggestion-title {
@@ -123,4 +124,10 @@
 
 .hidden {
   display: none;
+}
+  */
+
+a {
+  text-decoration: none; /* 밑줄 제거 */
+  color: inherit; /* 부모 요소의 색상 유지 */
 }
