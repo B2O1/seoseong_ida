@@ -2,11 +2,12 @@
 <html>
   <head>
     <title>home</title>
-    <link rel="stylesheet" href="../css/home.css" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/header.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/header-body.css' %}" />
   </head>
   <body>
-    <object class="header" data="header.html"></object>
-    <object class="home_search" data="home_search.html" type=""></object>
-    <object class="header-body" data="header-body.html" type=""></object>
+    {% include 'header.html'%} {% include 'home_search.html' %} {% include 'header-body.html' %}
   </body>
 </html>
