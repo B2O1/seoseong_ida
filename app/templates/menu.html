@@ -4,6 +4,109 @@
         <title>메뉴로 찾기</title>
         <link rel="stylesheet" href="../css/menu.css">
         <link rel="stylesheet" href="../css/home.css">
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const popup = document.getElementById('searchSuggestions');
+                const searchInput = document.querySelector('.search-bar');
+                const searchForm = document.getElementById('searchForm'); // 검색 폼 추가
+        
+                // 선택된 값 저장 변수
+                let selectedValues = {
+                  coffee: '',
+                  beverage: '',
+                  dessert: '',
+                };
+        
+                // 팝업 열기
+                function showSuggestions() {
+                  if (popup) {
+                    popup.classList.remove('hidden');
+                    popup.style.display = 'block';
+                  }
+                }
+        
+                // 팝업 닫기 (선택된 버튼 초기화 X)
+                function hideSuggestions() {
+                  if (popup) {
+                    popup.classList.add('hidden');
+                    popup.style.display = 'none';
+                  }
+                }
+        
+                // 검색창 클릭 시 팝업 열기
+                if (searchInput) {
+                  searchInput.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    showSuggestions();
+                  });
+                }
+        
+                // 팝업 바깥을 클릭했을 때 닫기
+                document.addEventListener('click', function (event) {
+                  if (!popup.contains(event.target) && event.target !== searchInput) {
+                    hideSuggestions();
+                  }
+                });
+        
+                // 팝업 내부 클릭 시 닫히지 않도록 방지
+                if (popup) {
+                  popup.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                  });
+                }
+        
+                // 모든 카테고리에서 하나의 버튼만 선택 가능하도록 설정
+                const categories = {
+                  container_coffee: 'coffee',
+                  container_beverage: 'beverage',
+                  container_dessert: 'special',
+                };
+        
+                Object.keys(categories).forEach((categoryId) => {
+                  const category = document.getElementById(categoryId);
+                  if (category) {
+                    category.addEventListener('click', function (event) {
+                      if (event.target.classList.contains('tag-btn')) {
+                        event.stopPropagation();
+        
+                        // 같은 카테고리의 버튼에서 'selected' 클래스 제거
+                        category.querySelectorAll('.tag-btn').forEach((btn) => btn.classList.remove('selected'));
+        
+                        // 클릭한 버튼만 'selected' 클래스 추가
+                        event.target.classList.add('selected');
+        
+                        // 선택된 값 저장
+                        selectedValues[categories[categoryId]] = event.target.innerText.trim();
+                      }
+                    });
+                  }
+                });
+        
+                // 검색 입력창에서 엔터를 누르거나 검색 버튼을 클릭하면 search.html로 값 전달
+                if (searchForm) {
+                  searchForm.addEventListener('submit', function (event) {
+                    event.preventDefault(); // 기본 동작 막기
+        
+                    // 검색어 값 가져오기
+                    const searchQuery = searchInput.value.trim();
+                    console.log('🔍 검색어 입력 값:', searchQuery);
+        
+                    // URL 생성 (검색어 + 선택된 버튼 값)
+                    const queryParams = new URLSearchParams();
+                    if (searchQuery) queryParams.append('query', searchQuery);
+                    if (selectedValues.who) queryParams.append('who', selectedValues.who);
+                    if (selectedValues.what) queryParams.append('what', selectedValues.what);
+                    if (selectedValues.special) queryParams.append('special', selectedValues.special);
+        
+                    const finalURL = 'search.html?' + queryParams.toString();
+                    console.log('이동할 URL: ', finalURL);
+        
+                    // 현재 창에서 열기
+                    window.top.location.href = finalURL;
+                  });
+                }
+              });
+            </script>
         <style>
             * {
                 box-sizing: border-box;
