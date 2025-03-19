@@ -1,0 +1,46 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+#map {
+    height: 100%;
+    width: 70%;
+    max-width: 2000px; /* 최대 높이 제한 */
+}
+
+.info-layers{
+    /* margin-top: 20px; */
+    flex:1;
+    align-items: center;
+    padding: 10px;
+    background-color: blue;
+    overflow-y: scroll;
+}
+
+.info-box{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    margin: 10px auto;
+    background-color: white;
+}
+.info-layers{
+    -ms-overflow-style: none;
+ }
+ .info-layers::-webkit-scrollbar{
+   display:none;
+ }
+
+/* .find-mat{
+    font-size: larger;
+    font-weight: bolder;
+} */
+/* .sidebar{
+    overflow-y: scroll;
+}  */
