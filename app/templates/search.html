@@ -1,13 +1,1 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>search</title>
-    <link rel="stylesheet" href="../css/home.css" />
-  </head>
-  <body>
-    <!-- 기존 object 태그 유지 -->
-    <object class="header" data="header.html"></object>
-    <object class="home_search" data="home_search.html"></object>
-    <object class="" data="search-body.html"></object>
-  </body>
-</html>
+{% extends "reference.html" %} {% block search %} {% include "partials/home_search.html" %} {% endblock %}
