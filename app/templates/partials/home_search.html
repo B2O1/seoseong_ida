@@ -54,7 +54,105 @@
     </div>
   </main>
 </div>
-{% block scripts%}
+<script>
+  // Django에서 URL 이름으로 실제 URL 가져오기
+  const searchBaseUrl = "{% url 'search' %}";
+  const loginUrl = "{% url 'login' %}";
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const popup = document.getElementById('searchSuggestions');
+    const searchInput = document.querySelector('.search-bar');
+    const searchForm = document.getElementById('searchForm');
+
+    let selectedValues = {
+      who: '',
+      what: '',
+      special: '',
+    };
+
+    function showSuggestions() {
+      if (popup) {
+        popup.classList.remove('hidden');
+        popup.style.display = 'block';
+      }
+    }
+
+    function hideSuggestions() {
+      if (popup) {
+        popup.classList.add('hidden');
+        popup.style.display = 'none';
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('click', function (event) {
+        event.stopPropagation();
+        showSuggestions();
+      });
+    }
+
+    document.addEventListener('click', function (event) {
+      if (!popup.contains(event.target) && event.target !== searchInput) {
+        hideSuggestions();
+      }
+    });
+
+    if (popup) {
+      popup.addEventListener('click', function (event) {
+        event.stopPropagation();
+      });
+    }
+
+    const categories = {
+      container_who: 'who',
+      container_what: 'what',
+      container_special: 'special',
+    };
+
+    Object.keys(categories).forEach((categoryId) => {
+      const category = document.getElementById(categoryId);
+      if (category) {
+        category.addEventListener('click', function (event) {
+          if (event.target.classList.contains('tag-btn')) {
+            event.stopPropagation();
+            category.querySelectorAll('.tag-btn').forEach((btn) => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            selectedValues[categories[categoryId]] = event.target.innerText.trim();
+          }
+        });
+      }
+    });
+
+    if (searchForm) {
+      searchForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const searchQuery = searchInput.value.trim();
+        const queryParams = new URLSearchParams();
+
+        if (searchQuery) queryParams.append('query', searchQuery);
+        if (selectedValues.who) queryParams.append('who', selectedValues.who);
+        if (selectedValues.what) queryParams.append('what', selectedValues.what);
+        if (selectedValues.special) queryParams.append('special', selectedValues.special);
+
+        const finalURL = searchBaseUrl + '?' + queryParams.toString();
+        console.log('이동할 URL:', finalURL);
+
+        window.top.location.href = finalURL;
+      });
+    }
+
+    // 로그인 버튼 이동 예시
+    const loginButton = document.getElementById('loginButton');
+    if (loginButton) {
+      loginButton.addEventListener('click', function () {
+        window.location.href = loginUrl;
+      });
+    }
+  });
+</script>
+
+{% comment %}
 <script>
   /*function openPopup() {
             var name = '_parent';
@@ -163,4 +261,4 @@
     }
   });
 </script>
-{% endblock %}
+{% endcomment %}
