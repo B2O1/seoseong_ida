@@ -174,48 +174,53 @@ a {
   animation: carousel-animate-horizontal 27s linear infinite;
 }
 
+.slide:first-child {
+  opacity: 1 !important;
+  position: relative !important;
+}
+
 .slide:nth-child(1) {
-  -webkit-animation-delay: calc(3s * -1);
+  /* -webkit-animation-delay: calc(3s * -1); */
   animation-delay: calc(3s * -1);
 }
 
 .slide:nth-child(2) {
-  -webkit-animation-delay: calc(3s * 0);
+  /* -webkit-animation-delay: calc(3s * 0); */
   animation-delay: calc(3s * 0);
 }
 
 .slide:nth-child(3) {
-  -webkit-animation-delay: calc(3s * 1);
+  /* -webkit-animation-delay: calc(3s * 1); */
   animation-delay: calc(3s * 1);
 }
 
 .slide:nth-child(4) {
-  -webkit-animation-delay: calc(3s * 2);
+  /* -webkit-animation-delay: calc(3s * 2); */
   animation-delay: calc(3s * 2);
 }
 
 .slide:nth-child(5) {
-  -webkit-animation-delay: calc(3s * 3);
+  /* -webkit-animation-delay: calc(3s * 3); */
   animation-delay: calc(3s * 3);
 }
 
 .slide:nth-child(6) {
-  -webkit-animation-delay: calc(3s * 4);
+  /* -webkit-animation-delay: calc(3s * 4); */
   animation-delay: calc(3s * 4);
 }
 
 .slide:nth-child(7) {
-  -webkit-animation-delay: calc(3s * 5);
+  /* -webkit-animation-delay: calc(3s * 5); */
   animation-delay: calc(3s * 5);
 }
 
 .slide:nth-child(8) {
-  -webkit-animation-delay: calc(3s * 6);
+  /* -webkit-animation-delay: calc(3s * 6); */
   animation-delay: calc(3s * 6);
 }
 
 .slide:last-child {
-  -webkit-animation-delay: calc(-3s * 2);
+  /* -webkit-animation-delay: calc(-3s * 2); */
   animation-delay: calc(-3s * 2);
 }
 
@@ -230,7 +235,7 @@ a {
   height: 100%; /* 또는 원하는 높이 */
 }
 
-@-webkit-keyframes carousel-animate-horizontal {
+@keyframes carousel-animate-horizontal {
   0% {
     transform: translateX(100%) scale(0.5);
     opacity: 0;
@@ -550,10 +555,10 @@ body {
   margin-top: 20px;
 }
 
-#login-form > input[type='checkbox'] {
+/* #login-form > input[type='checkbox'] {
   display: none;
-}
-#login-form > label {
+} */
+/* #login-form > label {
   color: #999999;
 }
 #login-form input[type='checkbox'] + label {
@@ -567,7 +572,7 @@ body {
   background-image: url('checkbox-active.png');
   background-repeat: no-repeat;
   background-size: contain;
-}
+} */
 
 /* menu.css */
 .menu-search-bar {
