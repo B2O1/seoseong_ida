@@ -395,10 +395,6 @@ a {
   margin-bottom: 40px;
 }
 
-#container_what {
-  margin-bottom: 40px;
-}
-
 #searchSuggestions h3 {
   font-size: 16px;
   font-weight: bold;
@@ -754,4 +750,24 @@ body {
 
 .home_search.active object {
   opacity: 1; /* 클릭하면 보이게 변경 */
+}
+
+/*category.html*/
+#categorySuggestions {
+  margin-top: 30px;
+  /* margin-bottom: 25px; */
+  bottom: 20px;
+  margin-top: 30px;
+  /* margin-bottom: 25px; */
+  bottom: 20px;
+}
+
+#category_content {
+  margin-bottom: 40px;
+}
+
+#categorySuggestions h3 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
