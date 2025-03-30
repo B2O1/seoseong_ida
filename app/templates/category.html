@@ -1,8 +1,85 @@
 {% extends "reference.html" %} {% block search %} {% include "partials/home_search.html" %} {% endblock %} {% comment %}
 이거 왜이래래 {% endcomment %} {% block choose %}
 <div>
-  <span>카테고리 전체</span>
-  <span>카테고리를 선택해주세요</span>
-  <button type="submit">🔍 선택</button>
+  <span id="categorySelector">카테고리를 선택해주세요</span>
 </div>
-{% endblock %}
+<main id="categorySuggestions" class="suggestion-box hidden">
+  <div id="category_content">
+    <h3>누구와 함께 하나요?</h3>
+    <div>
+      <button class="tag-btn">분좋카 <span>(14)</span></button>
+      <button class="tag-btn">쾌좋카 <span>(14)</span></button>
+      <button class="tag-btn">혼좋카 <span>(9)</span></button>
+      <button class="tag-btn">단좋카 <span>(7)</span></button>
+      <button class="tag-btn">역세카 <span>(7)</span></button>
+      <button class="tag-btn">빵맛카 <span>(4)</span></button>
+      <button class="tag-btn">케맛카 <span>(3)</span></button>
+      <button class="tag-btn">커맛카 <span>(14)</span></button>
+      <button class="tag-btn">카공카 <span>(14)</span></button>
+      <button class="tag-btn">책좋카 <span>(9)</span></button>
+      <button class="tag-btn">주피카 <span>(7)</span></button>
+      <button class="tag-btn">숨나카 <span>(7)</span></button>
+      <button class="tag-btn">가좋카 <span>(4)</span></button>
+      <button class="tag-btn">이걸안카 <span>(3)</span></button>
+      <button class="tag-btn">올베카 <span>(7)</span></button>
+      <button class="tag-btn">화청카 <span>(4)</span></button>
+      <button class="tag-btn">한옥카 <span>(3)</span></button>
+      <button class="tag-btn">반동카 <span>(3)</span></button>
+      <button type="submit">적용하기</button>
+    </div>
+  </div>
+</main>
+{% endblock %} {%block script%}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const popup = document.getElementById('categorySuggestions');
+    const categorySelector = document.getElementById('categorySelector');
+    const categoryContent = document.getElementById('category_content');
+
+    function showSuggestions() {
+      if (popup) {
+        popup.classList.remove('hidden');
+        popup.style.display = 'block';
+      }
+    }
+
+    function hideSuggestions() {
+      if (popup) {
+        popup.classList.add('hidden');
+        popup.style.display = 'none';
+      }
+    }
+
+    if (categorySelector) {
+      categorySelector.addEventListener('click', function (event) {
+        event.stopPropagation();
+        showSuggestions();
+      });
+    }
+
+    document.addEventListener('click', function (event) {
+      if (!popup.contains(event.target) && event.target !== categorySelector) {
+        hideSuggestions();
+      }
+    });
+
+    if (popup) {
+      popup.addEventListener('click', function (event) {
+        event.stopPropagation(); // 팝업 내부 클릭 시 숨김 방지
+      });
+    }
+
+    // ✅ 버튼 클릭 시 selected 클래스 토글
+    if (categoryContent) {
+      categoryContent.addEventListener('click', function (event) {
+        const clicked = event.target.closest('.tag-btn');
+        if (clicked) {
+          // ✅ 이미 선택된 경우엔 해제, 아니면 선택
+          clicked.classList.toggle('selected');
+        }
+      });
+    }
+  });
+</script>
+
+{%endblock%}

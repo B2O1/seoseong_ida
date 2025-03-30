@@ -1,4 +1,115 @@
-{% extends "reference.html" %} {% block search %} {% include "partials/home_search.html" %} {% endblock %}
+{% extends "reference.html" %} {% block search %} {% include "partials/home_search.html" %} {% endblock %} {% comment %}
+이거 왜이래래 {% endcomment %} {% block choose %}
+<div>
+  <span id="categorySelector">메뉴를 선택해주세요</span>
+</div>
+  <main id="categorySuggestions" class="suggestion-box hidden">
+    <div class="category_content">
+      <h3>커피</h3>
+      <div>
+        <button class="tag-btn">🧑‍🤝‍🧑 친구랑 <span>(14)</span></button>
+        <button class="tag-btn">👩‍❤️‍👨 연인이랑 <span>(14)</span></button>
+        <button class="tag-btn">👨‍👩‍👧‍👦 가족이랑 <span>(9)</span></button>
+        <button class="tag-btn">🐶 반려동물과 함께 <span>(7)</span></button>
+        <button class="tag-btn">👤 혼자서 <span>(7)</span></button>
+        <button class="tag-btn">👥 단체로 <span>(4)</span></button>
+        <button class="tag-btn">🌍 외국인 친구와 <span>(3)</span></button>
+      </div>
+    </div>
+
+    <div class="category_content">
+      <h3>디저트</h3>
+      <div>
+        <button class="tag-btn">🍰 디저트 먹기 <span>(14)</span></button>
+        <button class="tag-btn">☕ 커피 마시기 <span>(14)</span></button>
+        <button class="tag-btn">💻 공부하기 <span>(9)</span></button>
+        <button class="tag-btn">📖 책 읽기 <span>(7)</span></button>
+        <button class="tag-btn">💬 수다 떨기 <span>(7)</span></button>
+        <button class="tag-btn">🏡 한옥 감성 즐기기 <span>(4)</span></button>
+        <button class="tag-btn">🐾 반려동물과 함께하기 <span>(3)</span></button>
+        <button class="tag-btn">💰 가성비 좋은 곳 찾기 <span>(3)</span></button>
+        <button class="tag-btn">🔍 숨겨진 카페 찾기 <span>(3)</span></button>
+        <button class="tag-btn">🚻 화장실 청결한 곳 찾기 <span>(3)</span></button>
+      </div>
+    </div>
+
+    <div class="category_content">
+      <h3>음료료</h3>
+      <div>
+        <button class="tag-btn">✨ 분위기 좋은 <span>(4)</span></button>
+        <button class="tag-btn">🏡 한옥 감성 <span>(3)</span></button>
+        <button class="tag-btn">🍽️ 빵이 맛있는 <span>(3)</span></button>
+        <button class="tag-btn">🍰 케이크가 맛있는 <span>(3)</span></button>
+        <button class="tag-btn">☕ 커피가 맛있는 <span>(3)</span></button>
+        <button class="tag-btn">📚 공부하기 좋은 <span>(4)</span></button>
+        <button class="tag-btn">🛋️ 쾌적한 <span>(3)</span></button>
+        <button class="tag-btn">🎶 조용한 <span>(3)</span></button>
+        <button class="tag-btn">🥇 올타임 베스트 <span>(3)</span></button>
+        <button class="tag-btn">🚀 주말 피해야 하는 <span>(3)</span></button>
+        <button class="tag-btn">🕵️ 숨겨진 나만의 공간 <span>(3)</span></button>
+        <button class="tag-btn">🐾 반려동물과 함께 <span>(3)</span></button>
+        <button class="tag-btn">🥛 우유 변경 가능 <span>(3)</span></button>
+      </div>
+    </div>
+    <button type="submit">적용하기</button>
+  </main>
+{% endblock %} {%block script%}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const popup = document.getElementById('categorySuggestions');
+    const categorySelector = document.getElementById('categorySelector');
+    const categoryContent = document.querySelectorAll('.category_content');
+
+    function showSuggestions() {
+      if (popup) {
+        popup.classList.remove('hidden');
+        popup.style.display = 'block';
+      }
+    }
+
+    function hideSuggestions() {
+      if (popup) {
+        popup.classList.add('hidden');
+        popup.style.display = 'none';
+      }
+    }
+
+    if (categorySelector) {
+      categorySelector.addEventListener('click', function (event) {
+        event.stopPropagation();
+        showSuggestions();
+      });
+    }
+
+    document.addEventListener('click', function (event) {
+      if (!popup.contains(event.target) && event.target !== categorySelector) {
+        hideSuggestions();
+      }
+    });
+
+    if (popup) {
+      popup.addEventListener('click', function (event) {
+        event.stopPropagation(); // 팝업 내부 클릭 시 숨김 방지
+      });
+    }
+
+    // ✅ 버튼 클릭 시 selected 클래스 토글
+    if (categoryContent) {
+        categoryContent.forEach((section) => {
+        section.addEventListener('click', function (event) {
+            const clicked = event.target.closest('.tag-btn');
+            if (clicked) {
+                clicked.classList.toggle('selected');
+            }
+        });
+});
+
+    }
+  });
+</script>
+
+{%endblock%}
+
 
 {% comment %} <!DOCTYPE html>
 <html>
