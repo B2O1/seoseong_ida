@@ -1,0 +1,48 @@
+<!DOCTYPE>
+
+<html>
+    <head>
+        {% load static  %}
+        <link rel="stylesheet" href="{% static 'css/total.css' %}" />
+    </head>
+    <body id="wrap">
+        <section class="header">
+            <div class="left-section">
+              <div class="header-title" onclick="location.href='home.html'">서성이다</div>
+              <div class="header-sub-title" onclick="location.href='home.html'">니들이 카페를 알아?</div>
+            </div>
+            <div class="middle-section">
+              <div class="map" onclick="location.href='findbymap.html'">지도로 찾기</div>
+              <div class="menu" onclick="location.href='menu.html'">메뉴로 찾기</div>
+              <div class="category" onclick="location.href='category.html'">카테고리로 찾기</div>
+              <div class="keyword" onclick="location.href='index.html'">아무거나</div>
+            </div>
+            <div class="right-section">
+              <div class="FAQ" onclick="location.href='faq.html'">문의</div>
+              <div class="login" onclick="location.href='login.html'">로그인</div>
+              <div class="createaccount" onclick="location.href='index.html'">회원가입</div>
+            </div>
+          </section>
+          {% block content %}
+            {% endblock  %}
+        <div class="footer">
+            <div class="footer-upper-box">
+                <div class="box">
+                    김혜원
+                </div>
+                <div class="box">
+                    박찬우
+                </div>
+                <div class="box">
+                    변해민
+                </div>
+            </div>
+            <a href="https://github.com/B2O1/seoseong_ida" target="_blank" class="footer-link">https://github.com/B2O1/seoseong_ida</a>
+        </div>
+    </body>
+
+    {% block scripts %}
+    {% endblock %}
+     
+    
+</html>

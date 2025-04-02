@@ -1,0 +1,24 @@
+{% extends 'reference.html' %}
+{% load static %}
+
+{% block title %}
+    로그인 페이지 
+{% endblock %}
+
+{% block content %}
+    <div class = 'login-body'>
+        <div class="login-title">서성이다</div>
+        <div class="login-wrapper">
+            <h2>Login</h2>
+            <form method="post" action="test_home.html" id="login-form">
+                <input type="text" name="userName" placeholder="Email">
+                <input type="password" name="userPassword" placeholder="Password">
+                <input type ='checkbox' name = 'remember_id'>
+                <input type="submit" value="Login">
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
