@@ -53,7 +53,51 @@
     </div>
     <button type="submit">적용하기</button>
   </main>
-{% endblock %} {%block script%}
+{% endblock %}
+{% load static %}
+
+{% block title %}
+    메뉴로 찾기 
+{% endblock %}
+
+{% block content %}
+    <div class='search-page-banner'>
+        <h3 class='searh-page-header'> 추천 카페 리스트 </h3>
+        <div class='search-page-wrapper'>
+            <ul class='banner-list'>
+                <li>
+                    <div class='banner-list-content'>
+                        <img src=''>
+                        <h3>카페이름1</h3>
+                        <p>카페설명입니다</p>
+                    </div>
+                </li>
+                <li>
+                    <div class='banner-list-content'>
+                        <img src=''>
+                        <h3>카페이름2</h3>
+                        <p>카페설명입니다</p>
+                    </div>
+                </li>
+                <li>
+                    <div class='banner-list-content'>
+                        <img src=''>
+                        <h3>카페이름3</h3>
+                        <p>카페설명입니다</p>
+                    </div>
+                </li>
+                <li>
+                    <div class='banner-list-content'>
+                        <img src=''>
+                        <h3>카페이름4</h3>
+                        <p>카페설명입니다</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+{%block script%}
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const popup = document.getElementById('categorySuggestions');
