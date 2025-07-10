@@ -5,34 +5,32 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/total.css' %}" />
   </head>
-  <body id="wrap">
-    <section class="header">
-      <div class="left-section">
-        <a href="/" class="header-title">서성이다</a>
-        <a href="/" class="header-sub-title">니들이 카페를 알아?</a>
+  <body id="reference-wrap">
+    <section class="reference-header">
+      <div class="reference-left-section">
+        <a href="/" class="reference-header-title">서성이다</a>
+        <a href="/" class="reference-header-sub-title">니들이 카페를 알아?</a>
       </div>
-      <div class="middle-section">
-        <a href="/findbymap/" class="map">지도로 찾기</a>
-        <a href="/menu/" class="menu">메뉴로 찾기</a>
-        <a href="/category/" class="category">카테고리로 찾기</a>
-        <a href="/index/" class="keyword">아무거나</a>
+      <div class="reference-middle-section">
+        <a href="/findbymap/" class="reference-map">지도로 찾기</a>
+        <a href="/menu/" class="reference-menu">메뉴로 찾기</a>
+        <a href="/category/" class="reference-category">카테고리로 찾기</a>
+        <a href="/index/" class="reference-keyword">아무거나</a>
       </div>
       <div class="right-section">
         <a href="/faq/" class="FAQ">문의</a>
         <a href="/login/" class="login">로그인</a>
-        <a href="/register/" class="createaccount">회원가입</a>
+        <a href="/index/" class="createaccount">회원가입</a>
       </div>
     </section>
-    {% block search %} {% endblock %} {% block activate %} {% endblock %} {% block login %} {% endblock %} {% comment %}
-    이거 왜이래래 {% endcomment %} {% block choose %} {% endblock %} {% block title %} {% endblock %} {%block content%}
-    {%endblock%} {%block script%} {%endblock%}
+    {% block search %} {% endblock %} {% block activate %} {% endblock %} {% block login %} {% endblock %}
     <div class="footer">
       <div class="footer-upper-box">
         <div class="box">김혜원</div>
         <div class="box">박찬우</div>
         <div class="box">변해민</div>
       </div>
-      <a href="https://github.com/B2O1/seoseong_ida" target="_blank" class="footer-link"
+      <a href="https://github.com/B2O1/seoseong_ida" target="_blank" class="reference-footer-link"
         >https://github.com/B2O1/seoseong_ida</a
       >
     </div>

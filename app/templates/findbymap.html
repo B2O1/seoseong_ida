@@ -1,71 +1,50 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>findbymap</title>
-    <link rel="stylesheet" href="{% static 'css/findbymap.css' %}" />
-  </head>
-  <body>
-    <p>
-      <button onclick="zoomIn()">확대</button>
-      <button onclick="zoomOut()">축소</button>
-      <span id="maplevel"></span>
-    </p>
-    <div class="map-wrapper">
-      <div id="map"></div>
-      <div class="info-layers">
-        {% for place in places %}
-          <div class="info-box">
-            <div>{{ place.crawling_name }}</div>
-            <div>{{ place.category }}</div>
-          </div>
-        {% empty %}
-          <p>등록된 장소가 없습니다.</p>
-        {% endfor %}
-      </div>
-    </div>
-
-{% load static %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'js/findbymap.js' %}"></script>
-<script type="text/javascript" 
-src="//dapi.kakao.com/v2/maps/sdk.js?appkey=
-fd9a6f2bdc74720bc9555e24a3af8ea2
-&libraries=services"></script>
-<script>
-function zoomIn() {        
-    // 현재 지도의 레벨을 얻어옵니다
-    var level = map.getLevel();
+    <head>
+        <meta charset="utf-8"/>
+        <title>findbymap</title>
+        <link rel="stylesheet" href="findbymap.css">
+    </head>
+    <body>
+        <div id="map"></div>
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=fd9a6f2bdc74720bc9555e24a3af8ea2"></script>
+        <script>
+            var container = document.getElementById('map');
+            var options = {
+                center: new kakao.maps.LatLng(33.450701, 126.570667),
+                level: 3
+            };
     
-    // 지도를 1레벨 내립니다 (지도가 확대됩니다)
-    map.setLevel(level - 1);
-    
-    // 지도 레벨을 표시합니다
-    displayLevel();
-}    
-
-function zoomOut() {    
-    // 현재 지도의 레벨을 얻어옵니다
-    var level = map.getLevel(); 
-    
-    // 지도를 1레벨 올립니다 (지도가 축소됩니다)
-    map.setLevel(level + 1);
-    
-    // 지도 레벨을 표시합니다
-    displayLevel(); 
-}    
-
-$(function() {
-      // 문서가 준비되면 자동 실행
-      CoffeePlaces.init(
-        'map',                                      // 지도를 그릴 div ID
-        new kakao.maps.LatLng(37.566826, 126.9786567), // 초기 중심 좌표
-        3,                                          // 줌 레벨
-        300                                         // 키워드별 호출 간격(ms)
-      );
-    });
-</script>
-</body>
+            var map = new kakao.maps.Map(container, options);
+        </script>
+        <!-- <div class="sidebar"> -->
+            <!-- <div class="find-mat">
+                맛도리를 찾아보자
+            </div> -->
+            <div class="info-layers">
+                <div class="info-box">
+                    <img src="intro-to-html/chris.jpeg" alt="" style="width: 300px; height: 300px;">
+                    <div>가게이름</div>
+                    <div>가게 설명 or 카테고리</div>
+                </div>
+                <div class="info-box">
+                    <img src="intro-to-html/chris.jpeg" alt="" style="width: 300px; height: 300px;">
+                    <div>something</div>
+                    <div>something123</div>
+                </div>
+                <div class="info-box">
+                    <img src="intro-to-html/chris.jpeg" alt="" style="width: 300px; height: 300px;">
+                    <div>가게이름</div>
+                    <div>가게 설명 or 카테고리</div>
+                </div>
+                <div class="info-box">
+                    <img src="intro-to-html/chris.jpeg" alt="" style="width: 300px; height: 300px;">
+                    <div>something</div>
+                    <div>something123</div>
+                </div>
+            </div>
+        <!-- </div> -->
+    </body>
 </html>
 
