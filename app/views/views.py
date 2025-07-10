@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from app.models import Place
 
 # Create your views here.
 def home(request):
@@ -13,3 +14,8 @@ def category(request):
     return render(request, 'category.html')
 def menu(request):
     return render(request, 'menu.html')
+def findbymap(request):
+    places = Place.objects.all()[:20]
+    return render(request, 'findbymap.html', {
+        'places': places,
+    })
