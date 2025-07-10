@@ -5,4 +5,4 @@ app/migrations/__pycache__
 app/__pycache__
 app/views/__pycache__
 app/test_templates
-.env
+.env.DS_Store
