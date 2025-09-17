@@ -6,7 +6,6 @@ class Post(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-
 class Cafe(models.Model):
     public_store_name  = models.CharField(max_length=255, blank=True, null=True)
     crawled_store_name = models.CharField(max_length=255, blank=True, null=True)
