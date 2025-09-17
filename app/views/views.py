@@ -13,3 +13,5 @@ def category(request):
     return render(request, 'category.html')
 def menu(request):
     return render(request, 'menu.html')
+def findbymap_2(request):
+    return render(request, 'findbymap_2.html')
