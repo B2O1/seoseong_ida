@@ -8,6 +8,9 @@ import hashlib, re
 class FindByMapView(TemplateView):
     template_name = "cafes/findbymap.html"
 
+class CategoryView(TemplateView):
+    template_name = "cafes/category.html"
+
 _num_re = re.compile(r"(\d+(?:\.\d+)?)")
 
 def _clean_rating(val):

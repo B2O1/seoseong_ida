@@ -1,4 +1,4 @@
-.home-body{
+.home-body {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -8,11 +8,11 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.home-input{
+.home-input {
   display: none;
 }
 
-.home-container{
+.home-container {
   width: 100%;
   height: 100%;
   max-width: 600px;
@@ -25,7 +25,7 @@
   margin-bottom: 100px;
 }
 
-.home-cards{
+.home-cards {
   position: relative;
   height: 500px;
   width: 430px;
@@ -34,7 +34,7 @@
   transform-style: preserve-3d;
 }
 
-.home-cards label{
+.home-cards label {
   position: absolute;
   width: 430px;
   left: 0;
@@ -44,7 +44,7 @@
   transition: transform 0.55s ease;
 }
 
-.home-cards .home-card{
+.home-cards .home-card {
   position: relative;
   height: 100%;
   background-color: #404457;
@@ -52,26 +52,26 @@
   padding: 30px 35px;
 }
 
-.home-cards .home-image{
+.home-cards .home-image {
   display: flex;
   justify-content: space-between;
 }
-.home-cards .home-image img{
+.home-cards .home-image img {
   border-radius: 5px;
   box-shadow: 15px 15px 40px;
   width: 86%;
   height: 220px;
   object-fit: cover;
-  transition: all .7s;
+  transition: all 0.7s;
 }
-.home-cards .home-image img:hover{
+.home-cards .home-image img:hover {
   transform: scale(1.05);
 }
 
-.home-cards .home-dots{
+.home-cards .home-dots {
   text-align: center;
 }
-.home-dots div{
+.home-dots div {
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -86,56 +86,56 @@
   color: var(--home-current-color1);
   letter-spacing: 8px;
 }
-.home-card .home-lorem{
+.home-card .home-lorem {
   font-size: 15.5px;
   letter-spacing: 10px;
 }
 
-#home-s1:checked~.home-cards #home-slide4,
-#home-s2:checked~.home-cards #home-slide5,
-#home-s3:checked~.home-cards #home-slide1,
-#home-s4:checked~.home-cards #home-slide2,
-#home-s5:checked~.home-cards #home-slide3{
+#home-s1:checked ~ .home-cards #home-slide4,
+#home-s2:checked ~ .home-cards #home-slide5,
+#home-s3:checked ~ .home-cards #home-slide1,
+#home-s4:checked ~ .home-cards #home-slide2,
+#home-s5:checked ~ .home-cards #home-slide3 {
   box-shadow: 0 15px 30px rgb(0, 1, 2);
   transform: translate3d(-100%, 0, -220px);
   --home-current-color1: #eceaed;
   --home-current-color2: #404457;
 }
-#home-s1:checked~.home-cards #home-slide5,
-#home-s2:checked~.home-cards #home-slide1,
-#home-s3:checked~.home-cards #home-slide2,
-#home-s4:checked~.home-cards #home-slide3,
-#home-s5:checked~.home-cards #home-slide4{
+#home-s1:checked ~ .home-cards #home-slide5,
+#home-s2:checked ~ .home-cards #home-slide1,
+#home-s3:checked ~ .home-cards #home-slide2,
+#home-s4:checked ~ .home-cards #home-slide3,
+#home-s5:checked ~ .home-cards #home-slide4 {
   box-shadow: 0 20px 40px rgb(0, 1, 2);
   transform: translate3d(-50%, 0, -120px);
   --home-current-color1: #eceaed;
   --home-current-color2: #404457;
 }
-#home-s1:checked~.home-cards #home-slide1,
-#home-s2:checked~.home-cards #home-slide2,
-#home-s3:checked~.home-cards #home-slide3,
-#home-s4:checked~.home-cards #home-slide4,
-#home-s5:checked~.home-cards #home-slide5{
+#home-s1:checked ~ .home-cards #home-slide1,
+#home-s2:checked ~ .home-cards #home-slide2,
+#home-s3:checked ~ .home-cards #home-slide3,
+#home-s4:checked ~ .home-cards #home-slide4,
+#home-s5:checked ~ .home-cards #home-slide5 {
   box-shadow: 0 15px 30px rgb(0, 1, 2);
   transform: translate3d(0, 0, 0);
   --home-current-color1: #eceaed;
   --home-current-color2: #404457;
 }
-#home-s1:checked~.home-cards #home-slide2,
-#home-s2:checked~.home-cards #home-slide3,
-#home-s3:checked~.home-cards #home-slide4,
-#home-s4:checked~.home-cards #home-slide5,
-#home-s5:checked~.home-cards #home-slide1{
+#home-s1:checked ~ .home-cards #home-slide2,
+#home-s2:checked ~ .home-cards #home-slide3,
+#home-s3:checked ~ .home-cards #home-slide4,
+#home-s4:checked ~ .home-cards #home-slide5,
+#home-s5:checked ~ .home-cards #home-slide1 {
   box-shadow: 0 20px 40px rgb(0, 1, 2);
   transform: translate3d(50%, 0, -120px);
   --home-current-color1: #eceaed;
   --home-current-color2: #404457;
 }
-#home-s1:checked~.home-cards #home-slide3,
-#home-s2:checked~.home-cards #home-slide4,
-#home-s3:checked~.home-cards #home-slide5,
-#home-s4:checked~.home-cards #home-slide1,
-#home-s5:checked~.home-cards #home-slide2{
+#home-s1:checked ~ .home-cards #home-slide3,
+#home-s2:checked ~ .home-cards #home-slide4,
+#home-s3:checked ~ .home-cards #home-slide5,
+#home-s4:checked ~ .home-cards #home-slide1,
+#home-s5:checked ~ .home-cards #home-slide2 {
   box-shadow: 0 15px 30px rgb(0, 1, 2);
   transform: translate3d(100%, 0, -220px);
   --home-current-color1: #eceaed;
