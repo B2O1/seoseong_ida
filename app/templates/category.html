@@ -1,100 +1,117 @@
 {% extends "reference.html" %} {% block search %} {% include "partials/home_search.html" %} {% endblock %} {% comment %}
 이거 왜이래래 {% endcomment %} {% block choose %}
 <div>
-  <span id="categorySelector">카테고리를 선택해주세요</span>
+  <span id="categorySelector" role="button" tabindex="0">카테고리를 선택해주세요</span>
 </div>
-<main id="categorySuggestions" class="suggestion-box hidden">
+
+<main id="categorySuggestions" class="suggestion-box hidden" aria-hidden="true">
   <div id="category_content">
-    <h3>누구와 함께 하나요?</h3>
-    <div>
-      <button class="tag-btn">분좋카 <span>(14)</span></button>
-      <button class="tag-btn">쾌좋카 <span>(14)</span></button>
-      <button class="tag-btn">혼좋카 <span>(9)</span></button>
-      <button class="tag-btn">단좋카 <span>(7)</span></button>
-      <button class="tag-btn">역세카 <span>(7)</span></button>
-      <button class="tag-btn">빵맛카 <span>(4)</span></button>
-      <button class="tag-btn">케맛카 <span>(3)</span></button>
-      <button class="tag-btn">커맛카 <span>(14)</span></button>
-      <button class="tag-btn">카공카 <span>(14)</span></button>
-      <button class="tag-btn">책좋카 <span>(9)</span></button>
-      <button class="tag-btn">주피카 <span>(7)</span></button>
-      <button class="tag-btn">숨나카 <span>(7)</span></button>
-      <button class="tag-btn">가좋카 <span>(4)</span></button>
-      <button class="tag-btn">이걸안카 <span>(3)</span></button>
-      <button class="tag-btn">올베카 <span>(7)</span></button>
-      <button class="tag-btn">화청카 <span>(4)</span></button>
-      <button class="tag-btn">한옥카 <span>(3)</span></button>
-      <button class="tag-btn">반동카 <span>(3)</span></button>
-      <button type="submit">적용하기</button>
+    <h3>오늘은 어떤 무드?</h3>
+    <div class="tags">
+      <!-- 버튼에 data-code로 실제 카테고리 값을 심어둡니다 (URL ?cat=값 으로 전달) -->
+      <button class="tag-btn" data-code="분좋카">분좋카 <span>()</span></button>
+      <button class="tag-btn" data-code="쾌좋카">쾌좋카 <span>()</span></button>
+      <button class="tag-btn" data-code="혼좋카">혼좋카 <span>()</span></button>
+      <button class="tag-btn" data-code="단좋카">단좋카 <span>()</span></button>
+      <button class="tag-btn" data-code="역세카">역세카 <span>()</span></button>
+      <button class="tag-btn" data-code="빵맛카">빵맛카 <span>()</span></button>
+      <button class="tag-btn" data-code="케맛카">케맛카 <span>()</span></button>
+      <button class="tag-btn" data-code="커맛카">커맛카 <span>()</span></button>
+      <button class="tag-btn" data-code="카공카">카공카 <span>()</span></button>
+      <button class="tag-btn" data-code="책좋카">책좋카 <span>()</span></button>
+      <button class="tag-btn" data-code="주피카">주피카 <span>()</span></button>
+      <button class="tag-btn" data-code="숨나카">숨나카 <span>()</span></button>
+      <button class="tag-btn" data-code="가좋카">가좋카 <span>()</span></button>
+      <button class="tag-btn" data-code="이걸안카">이걸안카 <span>()</span></button>
+      <button class="tag-btn" data-code="올베카">올베카 <span>()</span></button>
+      <button class="tag-btn" data-code="화청카">화청카 <span>()</span></button>
+      <button class="tag-btn" data-code="한옥카">한옥카 <span>()</span></button>
+      <button class="tag-btn" data-code="반동카">반동카 <span>()</span></button>
+
+      <button id="applyFilters" type="button">적용하기</button>
     </div>
   </div>
 </main>
-{% endblock %} {% load static %} {% block title %} 카테고리로 찾기 {% endblock %} {% block content %}
+{% endblock %} {% block title %} {% endblock %} {% block content %}
 <div class="search-page-banner">
-  <h3 class="searh-page-header">추천 카페 리스트</h3>
+  <h3 class="search-page-header">
+    추천 카페 리스트 {% if page_obj %}<small>({{ page_obj.paginator.count }}곳)</small> {% elif cafes %}<small
+      >({{ cafes|length }}곳)</small
+    >{% endif %}
+  </h3>
+
   <div class="search-page-wrapper">
     <ul class="banner-list">
+      {# ▶ 하드코딩 대신 반복 렌더링 #} {% for cafe in cafes %}
       <li>
         <div class="banner-list-content">
-          <img src="" />
-          <h3>카페이름1</h3>
-          <p>카페설명입니다</p>
+          {% comment %}
+          <img
+            src="{{ cafe.main_photo_url|default:static('img/placeholder_cafe.jpg') }}"
+            alt="{{ cafe.name }}"
+            loading="lazy"
+          />
+          {% endcomment %}
+          <h3>{{ cafe.name }}</h3>
+          <p>{{ cafe.description|default:"카페 설명이 준비 중입니다." }}</p>
         </div>
       </li>
-      <li>
-        <div class="banner-list-content">
-          <img src="" />
-          <h3>카페이름2</h3>
-          <p>카페설명입니다</p>
-        </div>
-      </li>
-      <li>
-        <div class="banner-list-content">
-          <img src="" />
-          <h3>카페이름3</h3>
-          <p>카페설명입니다</p>
-        </div>
-      </li>
-      <li>
-        <div class="banner-list-content">
-          <img src="" />
-          <h3>카페이름4</h3>
-          <p>카페설명입니다</p>
-        </div>
-      </li>
+      {% empty %}
+      <li>조건에 맞는 카페가 없어요.</li>
+      {% endfor %}
     </ul>
   </div>
+
+  {# ▶ 페이지네이션(필요시) - 기존 cat, q 파라미터 유지 #} {% if page_obj %} {% comment %}
+  <nav class="pagination" aria-label="페이지네이션">
+    {% if page_obj.has_previous %}
+    <a
+      href="?{% for c in request.GET.getlist 'cat' %}cat={{ c|urlencode }}&{% endfor %}{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}"
+      >이전</a
+    >
+    {% endif %}
+    <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a
+      href="?{% for c in request.GET.getlist 'cat' %}cat={{ c|urlencode }}&{% endfor %}{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}page={{ page_obj.next_page_number }}"
+      >다음</a
+    >
+    {% endif %}
+  </nav>
+  {% endcomment %} {% endif %}
 </div>
-{% endblock %} {%block script%}
+{% endblock %} {% block script %}
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const popup = document.getElementById('categorySuggestions');
     const categorySelector = document.getElementById('categorySelector');
-    const categoryContent = document.getElementById('category_content');
+    const applyBtn = document.getElementById('applyFilters');
 
     function showSuggestions() {
-      if (popup) {
-        popup.classList.remove('hidden');
-        popup.style.display = 'block';
-      }
+      if (!popup) return;
+      popup.classList.remove('hidden');
+      popup.style.display = 'block';
+      popup.setAttribute('aria-hidden', 'false');
     }
-
     function hideSuggestions() {
-      if (popup) {
-        popup.classList.add('hidden');
-        popup.style.display = 'none';
-      }
+      if (!popup) return;
+      popup.classList.add('hidden');
+      popup.style.display = 'none';
+      popup.setAttribute('aria-hidden', 'true');
     }
 
     if (categorySelector) {
-      categorySelector.addEventListener('click', function (event) {
-        event.stopPropagation();
-        showSuggestions();
+      ['click', 'keydown'].forEach((evt) => {
+        categorySelector.addEventListener(evt, function (e) {
+          if (evt === 'keydown' && !['Enter', ' '].includes(e.key)) return;
+          e.stopPropagation();
+          showSuggestions();
+        });
       });
     }
 
     document.addEventListener('click', function (event) {
-      if (!popup.contains(event.target) && event.target !== categorySelector) {
+      if (popup && !popup.contains(event.target) && event.target !== categorySelector) {
         hideSuggestions();
       }
     });
@@ -105,17 +122,35 @@
       });
     }
 
-    // ✅ 버튼 클릭 시 selected 클래스 토글
-    if (categoryContent) {
-      categoryContent.addEventListener('click', function (event) {
-        const clicked = event.target.closest('.tag-btn');
-        if (clicked) {
-          // ✅ 이미 선택된 경우엔 해제, 아니면 선택
-          clicked.classList.toggle('selected');
-        }
+    // 버튼 클릭 시 selected 토글 (이벤트 위임)
+    const content = document.getElementById('category_content');
+    if (content) {
+      content.addEventListener('click', function (event) {
+        const b = event.target.closest('.tag-btn');
+        if (b) b.classList.toggle('selected');
+      });
+    }
+
+    // 현재 URL의 cat 파라미터를 읽어 초기 선택 상태 반영
+    const params = new URLSearchParams(window.location.search);
+    const cats = params.getAll('cat');
+    if (cats.length) {
+      document.querySelectorAll('.tag-btn').forEach((btn) => {
+        if (cats.includes(btn.dataset.code)) btn.classList.add('selected');
+      });
+    }
+
+    // 적용하기 → ?cat=... 파라미터로 갱신
+    if (applyBtn) {
+      applyBtn.addEventListener('click', function () {
+        const selected = Array.from(document.querySelectorAll('.tag-btn.selected')).map((b) => b.dataset.code);
+        const p = new URLSearchParams(window.location.search);
+        p.delete('cat'); // 기존 cat 제거
+        selected.forEach((c) => p.append('cat', c)); // 다중 추가
+        p.set('page', 1); // 필터 바꾸면 1페이지로
+        window.location.search = p.toString();
       });
     }
   });
 </script>
-
-{%endblock%}
+{% endblock %}
