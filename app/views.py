@@ -1,6 +1,16 @@
 from django.shortcuts import render
-from app.models import Place
+from app.models import Place, Post
+# app/views.py
+from django.http import JsonResponse
 
+def posts_json(request):
+    data = list(Post.objects.values('id', 'title', 'content', 'created_at').order_by('-id'))
+    return JsonResponse(
+        data,
+        safe=False,
+        json_dumps_params={'ensure_ascii': False, 'indent': 2, 'default': str},
+        content_type='application/json; charset=utf-8'
+    )
 # Create your views here.
 def home(request):
     return render(request, 'home.html')

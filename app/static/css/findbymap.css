@@ -1,49 +1,9 @@
-/* findbymap.css */
-
-/* 페이지 전체 여백 제거 및 높이 100vh 설정 */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-}
-
-/* map과 sidebar를 가로로 배치하는 wrapper */
-.map-wrapper {
-  display: flex;
-  width: 100%;
-  height: 100%;
-}
-
-/* 왼쪽: 카카오 지도 영역 */
-#map {
-  flex: 0 0 70%;     /* 너비 70% 고정 */
-  height: 100%;      /* 부모 높이 100% */
-}
-
-/* 오른쪽: 스크롤 가능한 사이드바 */
-.info-layers {
-  flex: 1;           /* 나머지 30% 차지 */
-  max-width: 30%;    /* 최대 너비 제한 */
-  height: 100%;      /* 부모 높이 100% */
-  padding: 10px;
-  box-sizing: border-box;
-  background-color: #eef;
-  overflow-y: auto;  /* 세로 스크롤 활성화 */
-  -ms-overflow-style: none;  /* IE, Edge 스크롤바 숨기기 */
-}
-
-/* Chrome, Safari 스크롤바 숨기기 */
-.info-layers::-webkit-scrollbar {
-  display: none;
-}
-
-/* info-box 개별 스타일 */
-.info-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #fff;
-  border: 1px solid #ccc;
-  padding: 8px;
-  margin-bottom: 12px;
-}
+html, body { height:100%; margin:0; font-family: -apple-system, system-ui, sans-serif; }
+#wrap { display:flex; height:100vh; }
+#map { flex:1 1 auto; border-right:1px solid #eee; }
+.side { width: 380px; max-width: 45vw; }
+.list { height:100%; overflow:auto; padding:10px; }
+.card { border:1px solid #ddd; border-radius:10px; padding:10px; margin-bottom:10px; cursor:pointer; }
+.card .name { font-weight:700; margin-bottom:4px; }
+.card .addr { font-size:12px; color:#555; }
+.card .meta { font-size:12px; color:#777; margin-top:4px; }
