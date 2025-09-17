@@ -7,5 +7,7 @@ app/views/__pycache__
 cafes/__pycache__
 cafes/migrations/__pycache__
 app/test_templates
+app/migrations/*.py
+!app/migrations/__init__.py
 .env
 .DS_Store

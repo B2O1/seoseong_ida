@@ -21,7 +21,7 @@ def register(request):
 def search(request):
     return render(request, 'search.html')
 def category(request):
-    return render(request, 'category.html')
+    return render(request, 'cafes/category.html')
 def findbymap(request):
     places = Place.objects.all()[:20]
     return render(request, 'findbymap.html', {
