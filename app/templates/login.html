@@ -1,14 +1,39 @@
-{% extends "reference.html" %} {% block login%}
-<div class="login-body">
-  <div class="login-title">서성이다</div>
-  <div class="login-wrapper">
-    <h2>Login</h2>
-    <form method="post" action="home.html" id="login-form">
-      <input type="text" name="userName" placeholder="Email" />
-      <input type="password" name="userPassword" placeholder="Password" />
-      <label for="remember-check"> <input type="checkbox" id="remember-check" />아이디 저장하기 </label>
-      <input type="submit" value="Login" />
-    </form>
-  </div>
-</div>
+{% extends 'reference.html' %}
+{% load static %}
+
+{% block content %}
+
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+    <script>  
+      
+    </script>
+      <div class="register-body">
+          <h1>로그인</h1>
+          <br>
+          <form class='sign_up_form' action="{% url 'login' %}" method = 'post'>
+            {% csrf_token %}
+            <input type='text' name='user_id' required placeholder='아이디'>
+            <input type='password' name='password' required placeholder='비밀번호'>
+            <button type='submit' class ='sign_up_form_btn'>로그인</button>
+          </form>
+          {% comment %} <button type="button" onclick="googleLogin(event); return false;">Google로 로그인</button> {% endcomment %}
+          <section class="login_section">
+              <div class="already_signed_up">회원이 아니신가요?</div>
+              <a href="{% url 'register' %}">
+                  <button class="login_button">회원가입</button>
+              </a>
+          </section>
+      </div>
+    </div>
+
+
+{% endblock %}
+
+{% block statics %}
 {% endblock %}

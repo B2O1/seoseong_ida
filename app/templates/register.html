@@ -1,64 +1,46 @@
-{% extends 'reference.html' %} {% load static %} {% block content %}
-<form action="login.html">
-  <table>
-    <tr>
-      <td><h2 style="text-align: center; margin-top: 50px">회원가입</h2></td>
-    </tr>
-    <tr>
-      <td>아이디</td>
-    </tr>
-    <tr>
-      <td><input type="text" class="register-text" required /></td>
-    </tr>
-    <tr>
-      <td>비밀번호</td>
-    </tr>
-    <tr>
-      <td><input type="password" class="register-text" required /></td>
-    </tr>
-    <tr>
-      <td>비밀번호 확인</td>
-    </tr>
-    <tr>
-      <td><input type="password" class="register-text" required /></td>
-    </tr>
-    <tr>
-      <td>이름</td>
-    </tr>
-    <tr>
-      <td><input type="text" class="register-text" required /></td>
-    </tr>
-    <tr>
-      <td>성별</td>
-    </tr>
-    <tr>
-      <td>
-        <input type="radio" name="gender" value="남" />남 <input type="radio" name="gender" value="여" checked />여
-      </td>
-    </tr>
-    <tr>
-      <td>생년월일</td>
-    </tr>
-    <tr>
-      <td><input type="date" class="register-text" /></td>
-    </tr>
-    <tr>
-      <td>이메일</td>
-    </tr>
-    <tr>
-      <td>
-        <input type="text" class="register-email" /> @
-        <select>
-          <option>naver.com</option>
-          <option>gmail.com</option>
-          <option>daum.net</option>
-          <option>nate.com</option>
-        </select>
-      </td>
-    </tr>
-    <tr>
-      <td><input type="submit" value="가입하기" class="register-btn" onclick="alert('가입 성공!')" /></td>
-    </tr>
-  </table>
-</form>
-{% endblock %} {% block statics %} {% endblock %}
+<!DOCTYPE html>
+
+{% extends 'reference.html' %}
+{% load static %}
+
+{% block content %}
+
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+        {{ message }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+    <script>
+
+    </script>
+
+    <div class='register-body'>
+        <h1> 회원가입 </h1>
+        <br>
+        <form class='sign_up_form' action="{% url 'register' %}" method ='post'>
+            {% csrf_token %}
+            <input type='text' name='username' placeholder='이름' />
+            <input type='text' name='user_id' required placeholder='아이디' />
+            <input type='password' name='password' required placeholder='비밀번호' />
+            <input type='password' name='password2' required placeholder='비밀번호 확인' />
+            <button type='submit' value='생성'>회원가입</button>
+        </form>
+        <section class='login_section'>
+            <div class='already_signed_up'>이미 회원이신가요?</div>
+            <a href='{% url 'login' %}'>
+                <button class='login_button'>로그인하기</button>
+            </a>
+        </section>
+    </div>
+
+
+
+{% endblock %}
+
+{% block statics %}
+{% endblock %}

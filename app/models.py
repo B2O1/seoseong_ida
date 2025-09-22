@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 # Create your models here.
 class Post(models.Model):
@@ -41,93 +43,34 @@ class Cafe(models.Model):
     night_cafe         = models.IntegerField(blank=True, null=True)
     hanok_cafe         = models.IntegerField(blank=True, null=True)
 
-from django.db import models
 
-# Create your models here.
-class Post(models.Model):
-    title = models.CharField(max_length=100)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return self.title
+class MyUserManager(BaseUserManager):
+    def create_user(self, user_id, username, password=None):
+        if not user_id:
+            raise ValueError("아이디는 반드시 입력해야 합니다.")
+        user = self.model(user_id=user_id, username=username)
+        user.set_password(password)  # 비밀번호 해시화
+        user.save(using=self._db)
+        return user
 
-class Place(models.Model):
-    crawling_name   = models.CharField(
-        max_length=255,
-        db_column='크롤링 가게명',
-        default='',
-        blank=True
-    )
-    category        = models.CharField(
-        max_length=100,
-        db_column='카테고리',
-        default='',
-        blank=True
-    )
-    time            = models.CharField(
-        max_length=100,
-        db_column='시간',
-        default='',
-        blank=True
-    )
-    # rating을 문자열로 받도록 변경
-    rating          = models.CharField(
-        max_length=50,
-        db_column='평점',
-        default='',
-        blank=True
-    )
-    source          = models.CharField(
-        max_length=100,
-        db_column='출처',
-        default='',
-        blank=True
-    )
-    content         = models.TextField(
-        db_column='content',
-        default='',
-        blank=True
-    )
-    date            = models.CharField(
-        max_length=50,
-        db_column='date',
-        default='',
-        blank=True
-    )
-    revisit         = models.CharField(
-        max_length=50,
-        db_column='revisit',
-        default='',
-        blank=True
-    )
-    purpose         = models.CharField(
-        max_length=100,
-        db_column='방문목적',
-        default='',
-        blank=True
-    )
-    companion       = models.CharField(
-        max_length=100,
-        db_column='동반자',
-        null=True,
-        blank=True
-    )
-    tags            = models.CharField(
-        max_length=255,
-        db_column='태그',
-        default='',
-        blank=True
-    )
-    selection_count = models.IntegerField(
-        db_column='선택 수',
-        default=0
-    )
-    convenience     = models.CharField(
-        max_length=255,
-        db_column='편의시설',
-        default='',
-        blank=True
-    )
+    def create_superuser(self, user_id, username, password):
+        user = self.create_user(user_id=user_id, username=username, password=password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
+
+
+class MyUser(AbstractBaseUser, PermissionsMixin):
+    user_id = models.CharField(max_length=20, unique=True)
+    username = models.CharField(max_length=50)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = MyUserManager()
+
+    USERNAME_FIELD = 'user_id'     # 로그인할 때 사용할 필드
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
-        return f"{self.crawling_name} ({self.category})"
+        return self.username
