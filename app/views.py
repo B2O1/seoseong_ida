@@ -1,15 +1,61 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.contrib.auth.models import User
-from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse, HttpResponse
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import get_user_model
-import json
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+
+from cafes.models import DfCafeFull
+
+from django.db.models import (
+    Exists, OuterRef, FloatField, Q,
+    F, Window, CharField, IntegerField
+)
+from django.db.models.functions import Cast, RowNumber
+from django.db.models.expressions import Func, Value
+
+import json
+import random
+from collections import defaultdict
+
+def home(request):
+    flag_fields = [
+        'comfy_cafe',
+        'solo_cafe',
+        'book_cafe',
+        'unique_cafe',
+        'group_cafe',
+        'coffee_taste_cafe',
+        'study_cafe',
+        'bright_cafe',
+        'mood_cafe',
+        'dessert_taste_cafe',
+        'cheap_cafe',
+        'animal_cafe',
+        'night_cafe',
+        'hanok_cafe',
+    ]
+
+    all_recommended = []
+
+    for field in flag_fields:
+        # 해당 속성이 1인 카페 중 무작위 2개
+        cafes = (
+            DfCafeFull.objects
+            .filter(**{field: 1})
+            .order_by('?')[:2]
+        )
+        all_recommended.extend(cafes)
+
+    # 전체 결과를 섞어줄 수도 있음
+    random.shuffle(all_recommended)
+
+    return render(request, "home.html", {"recommend_cafes": all_recommended})
+
+
+def search(request):
+    return render(request, 'search.html')
 
 def posts_json(request):
     data = list(Post.objects.values('id', 'title', 'content', 'created_at').order_by('-id'))
@@ -19,19 +65,8 @@ def posts_json(request):
         json_dumps_params={'ensure_ascii': False, 'indent': 2, 'default': str},
         content_type='application/json; charset=utf-8'
     )
-# Create your views here.
-def home(request):
-    return render(request, 'home.html')
-def search(request):
-    return render(request, 'search.html')
 
 User = get_user_model()
-
-# Create your views here.
-def home(request):
-    return render(request, 'home.html')
-def search(request):
-    return render(request, 'search.html')
 # 회원가입 (GET = 페이지, POST = 처리)
 def register(request):
     if request.method == "POST":

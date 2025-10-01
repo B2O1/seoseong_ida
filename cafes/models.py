@@ -9,6 +9,7 @@ from django.db import models
 
 
 class DfCafeFull(models.Model):
+    id = models.AutoField(primary_key=True)  # ← 명시적으로 ID 추가
     public_store_name = models.CharField(max_length=255, blank=True, null=True)
     crawled_store_name = models.CharField(max_length=255, blank=True, null=True)
     category = models.CharField(max_length=50, blank=True, null=True)

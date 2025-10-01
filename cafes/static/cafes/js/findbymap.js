@@ -3,20 +3,20 @@
   // 카테고리 정의
   // ─────────────────────────────────────────────────────────
   const CATEGORIES = [
-    { key: 'comfy_cafe',         label: '아늑한',       color: '#6C5CE7' },
-    { key: 'solo_cafe',          label: '혼카페',       color: '#0984E3' },
-    { key: 'book_cafe',          label: '북카페',       color: '#00A8FF' },
-    { key: 'unique_cafe',        label: '유니크',       color: '#8E44AD' },
-    { key: 'group_cafe',         label: '단체석',       color: '#D35400' },
-    { key: 'coffee_taste_cafe',  label: '커피맛집',     color: '#2ECC71' },
-    { key: 'study_cafe',         label: '공부',         color: '#00B894' },
-    { key: 'bright_cafe',        label: '밝음',         color: '#F1C40F' },
-    { key: 'mood_cafe',          label: '분위기',       color: '#E84393' },
-    { key: 'dessert_taste_cafe', label: '디저트맛집',   color: '#E17055' },
-    { key: 'cheap_cafe',         label: '가성비',       color: '#2D3436' },
-    { key: 'animal_cafe',        label: '동물동반',     color: '#6D214F' },
-    { key: 'night_cafe',         label: '야간',         color: '#34495E' },
-    { key: 'hanok_cafe',         label: '한옥',         color: '#A3CB38' },
+    { key: 'comfy_cafe',         label: '쾌좋카',       color: '#6C5CE7' },
+    { key: 'solo_cafe',          label: '혼좋카',       color: '#0984E3' },
+    { key: 'book_cafe',          label: '책좋카',       color: '#00A8FF' },
+    { key: 'unique_cafe',        label: '이걸안카',       color: '#8E44AD' },
+    { key: 'group_cafe',         label: '단좋카',       color: '#D35400' },
+    { key: 'coffee_taste_cafe',  label: '커맛카',     color: '#2ECC71' },
+    { key: 'study_cafe',         label: '카공카',         color: '#00B894' },
+    { key: 'bright_cafe',        label: '화청카',         color: '#F1C40F' },
+    { key: 'mood_cafe',          label: '분좋카',       color: '#E84393' },
+    { key: 'dessert_taste_cafe', label: '디맛카',   color: '#E17055' },
+    { key: 'cheap_cafe',         label: '가좋카',       color: '#2D3436' },
+    { key: 'animal_cafe',        label: '반동카',     color: '#6D214F' },
+    { key: 'night_cafe',         label: '밤샘카',         color: '#34495E' },
+    { key: 'hanok_cafe',         label: '한옼카',         color: '#A3CB38' },
   ];
   const CAT_KEYS = CATEGORIES.map(c => c.key);
   const isTrue = v => (v === 1 || v === '1' || v === true || v === 'true' || v === 'True');
