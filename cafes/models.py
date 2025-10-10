@@ -41,6 +41,8 @@ class DfCafeFull(models.Model):
     animal_cafe = models.IntegerField(blank=True, null=True)
     night_cafe = models.IntegerField(blank=True, null=True)
     hanok_cafe = models.IntegerField(blank=True, null=True)
+    # google_place_id = models.CharField(max_length=128, blank=True, null=True, db_index=True)
+    # google_photo_id = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
         managed = False

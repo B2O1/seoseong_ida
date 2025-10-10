@@ -1,9 +1,28 @@
-# cafes/views.py (public_store_name → crawled_store_name 전면 교체)
 from django.views.generic import TemplateView
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.db.models import F, Q
 from .models import DfCafeFull
+import requests
 import hashlib, re
+from django.conf import settings
+from django.http import HttpResponseRedirect, Http404
+from django.shortcuts import render
+from django.conf import settings
+import requests
+
+def place_photo_redirect(request, place_id: str, photo_id: str):
+    name = f"places/{place_id}/photos/{photo_id}"
+    url = f"https://places.googleapis.com/v1/{name}/media"
+    params = {"maxWidthPx": request.GET.get("w", 640)}
+    headers = {"X-Goog-Api-Key": settings.GOOGLE_API_KEY}
+    r = requests.get(url, headers=headers, params=params, timeout=8)
+    if r.ok and r.headers.get("Content-Type","").startswith("application/json"):
+        data = r.json()
+        if "photoUri" in data:
+            return HttpResponseRedirect(data["photoUri"])
+    elif r.is_redirect:
+        return HttpResponseRedirect(r.headers["Location"])
+    raise Http404("Photo not available")
 
 class FindByMapView(TemplateView):
     template_name = "cafes/findbymap.html"
