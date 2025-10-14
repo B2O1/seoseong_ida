@@ -132,3 +132,52 @@
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   }
 }
+
+/* 슬라이더 래퍼 */
+.cc_slider {
+  position: relative;
+  max-width: 1100px;      /* 가운데 폭: 필요에 맞게 조절 */
+  margin: 0 auto;         /* 화면 가운데 정렬 */
+  overflow: hidden;
+}
+
+/* 가로 트랙: 카드들을 가로로 나열 */
+.cc_track {
+  display: flex;
+  gap: 24px;              /* 카드 간격 */
+  padding: 8px 4px 12px;
+  overflow-x: auto;       /* 마우스로도 스크롤 가능 */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* 각 카드: 기존 클래스 유지, 폭만 고정 */
+.cc_track .cc_card {
+  flex: 0 0 320px;        /* 한 번에 보이는 카드 폭 */
+  scroll-snap-align: start;
+}
+
+/* 스크롤바 숨김(옵션) */
+.cc_track::-webkit-scrollbar { display: none; }
+.cc_track { scrollbar-width: none; }
+
+/* 좌우 네비 버튼 */
+.cc_nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px; height: 36px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  font-size: 20px;
+  line-height: 36px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 2;
+}
+.cc_prev { left: 6px; }
+.cc_next { right: 6px; }
+.cc_nav:hover { background: rgba(0,0,0,0.65); }

@@ -48,13 +48,76 @@ def _to_float(v):
         return float(v)
     except Exception:
         return None
+# ===============================
+# 헬퍼: 정렬키(별점 desc, 리뷰수 desc, 이름 asc-ish)
+# ===============================
+def _rank_key(item):
+    rating = item.get("rating")
+    has_rating = rating is not None
+    review_cnt = item.get("total_review_count") or 0
+    name = (item.get("crawled_store_name") or "").lower()
+    # reverse=True로 정렬할 거라 rating/리뷰수는 큰 값이 위로 감
+    # name은 reverse=True 때문에 Z→A가 되지만 영향은 미미 (동점자 tie-breaker 용)
+    return (has_rating, rating if rating is not None else -1.0, review_cnt, name)
 
+# ===============================
+# 헬퍼: 카테고리 균등 분포(라운드로빈)
+# ===============================
+def _balance_by_categories(items, cat_keys, page_size):
+    """
+    items: [{..., 'cats': {'book_cafe':1, ...}}]  # 내부 cats 딕셔너리 포함
+    cat_keys: 균등 분포를 원하는 카테고리 키 리스트
+    """
+    # 카테고리별 버킷 구성(각 버킷 내부는 기본 랭킹으로 정렬)
+    buckets = []
+    for k in cat_keys:
+        lst = [it for it in items if it.get("cats", {}).get(k) == 1]
+        lst.sort(key=_rank_key, reverse=True)
+        if lst:
+            buckets.append([k, lst])
+
+    used = set()
+    out = []
+
+    i = 0
+    guard = 0
+    while len(out) < page_size and buckets and guard < page_size * 50:
+        k, lst = buckets[i % len(buckets)]
+        # 이미 사용된 항목 제거
+        while lst and lst[0]["id"] in used:
+            lst.pop(0)
+        if lst:
+            it = lst.pop(0)
+            out.append(it)
+            used.add(it["id"])
+        else:
+            # 버킷이 비었으면 제거
+            buckets.pop(i % len(buckets))
+            i -= 1
+        i += 1
+        guard += 1
+
+    # 모자라면 남은 것 중 랭킹 높은 순으로 채우기
+    if len(out) < page_size:
+        remain = [it for it in items if it["id"] not in used]
+        remain.sort(key=_rank_key, reverse=True)
+        for it in remain:
+            if len(out) >= page_size:
+                break
+            out.append(it)
+            used.add(it["id"])
+
+    return out
+
+# ===============================
+# 메인: cafes_api (별점 높은 순 + 카테고리 균등 분포)
+# ===============================
 def cafes_api(request):
     """
     GET:
       - bbox=minLng,minLat,maxLng,maxLat (좌표 컬럼 있을 때만 사용)
       - zoom=int
-      - cats=CSV
+      - cats=CSV  (예: cats=book_cafe,study_cafe)
       - page_size=int (기본 500, 최대 1000)
       - page_token=offset (기본 0)
     """
@@ -84,7 +147,7 @@ def cafes_api(request):
     has_latlongw = ("lat_n" in model_fields and "long_w" in model_fields)
 
     base_fields = [
-        "crawled_store_name",  # ✅ 이름은 오직 이 필드만 사용
+        "crawled_store_name",  # 이름
         "address","rating",
     ]
     if has_latlng:
@@ -124,22 +187,13 @@ def cafes_api(request):
         if q:
             qs = qs.filter(q)
 
-    # 정렬: 리뷰수 → 크롤수 → 이름(✅ crawled_store_name)
-    order_fields = []
-    if "total_review_count" in model_fields:
-        order_fields.append(F("total_review_count").desc(nulls_last=True))
-    if "final_crawl_count" in model_fields:
-        order_fields.append(F("final_crawl_count").desc(nulls_last=True))
-    order_fields.append("crawled_store_name")
-    qs = qs.order_by(*order_fields)
-
-    # values 추출(여유분 ×5 → (이름,주소) dedupe → page_size 맞춤)
-    raw = list(qs.values(*use_fields)[offset : offset + page_size * 5])
+    # values 추출(여유분 크게: page_size * 10) → (이름,주소) dedupe
+    raw = list(qs.values(*use_fields)[offset : offset + page_size * 10])
 
     seen = set()
-    results = []
+    pool = []
     for r in raw:
-        name = (r.get("crawled_store_name") or "").strip()  # ✅ 여기서도 교체
+        name = (r.get("crawled_store_name") or "").strip()
         addr = (r.get("address") or "").strip()
         key = (name, addr)
         if key in seen:
@@ -150,7 +204,6 @@ def cafes_api(request):
         lng = _to_float(r.get("lng")) or _to_float(r.get("long_w"))
         rating = _clean_rating(r.get("rating"))
 
-        # ✅ 안정적 가짜 ID도 crawled_store_name 기준
         rid = hashlib.md5(f"{name}|{addr}".encode("utf-8")).hexdigest()[:12]
 
         cats = {}
@@ -158,19 +211,53 @@ def cafes_api(request):
             if k in r:
                 cats[k] = 1 if r.get(k) in (1, "1", True, "true", "True") else 0
 
-        results.append({
+        item = {
             "id": rid,
-            "crawled_store_name": name,  # ✅ 응답 키도 교체
+            "crawled_store_name": name,
             "address": addr,
             "rating": rating,
             "lat": lat,
             "lng": lng,
-            **cats,
-        })
-        if len(results) >= page_size:
-            break
+            "cats": cats,  # 균등 분포용으로 묶어서 보관
+        }
+        if "total_review_count" in r:
+            item["total_review_count"] = r.get("total_review_count") or 0
+        if "final_crawl_count" in r:
+            item["final_crawl_count"] = r.get("final_crawl_count") or 0
 
-    # next_page_token: offset 기반
+        pool.append(item)
+
+    # 기본 스코어링으로 먼저 정렬
+    pool.sort(key=_rank_key, reverse=True)
+
+    # 균등 분포 대상 카테고리 결정
+    if cat_keys:
+        balance_keys = [k for k in cat_keys if any(it["cats"].get(k) == 1 for it in pool)]
+    else:
+        balance_keys = [k for k in CATEGORY_KEYS if any(it["cats"].get(k) == 1 for it in pool)]
+
+    # 카테고리 균등 분포(라운드로빈)
+    balanced = _balance_by_categories(pool, balance_keys, page_size)
+
+    # 응답 형태(flat)로 변환
+    final_results = []
+    for it in balanced:
+        row = {
+            "id": it["id"],
+            "crawled_store_name": it["crawled_store_name"],
+            "address": it["address"],
+            "rating": it["rating"],
+            "lat": it["lat"],
+            "lng": it["lng"],
+        }
+        row.update(it["cats"])
+        if "total_review_count" in it:
+            row["total_review_count"] = it["total_review_count"]
+        if "final_crawl_count" in it:
+            row["final_crawl_count"] = it["final_crawl_count"]
+        final_results.append(row)
+
+    # offset 기반 토큰 (균등 분포로 실제 페이지 구성은 서버에서 함)
     next_token = str(offset + page_size) if len(raw) >= page_size else None
 
-    return JsonResponse({"results": results, "next_page_token": next_token})
+    return JsonResponse({"results": final_results, "next_page_token": next_token})

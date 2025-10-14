@@ -47,3 +47,14 @@ class DfCafeFull(models.Model):
     class Meta:
         managed = False
         db_table = 'df_cafe_full'
+
+class CafePhotoCache(models.Model):
+    key = models.CharField(max_length=255, unique=True, db_index=True)
+    place_id = models.CharField(max_length=255, blank=True, null=True)
+    photo_ref = models.TextField(blank=True, null=True)                  
+    width = models.IntegerField(blank=True, null=True)
+    height = models.IntegerField(blank=True, null=True)
+    fetched_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.key

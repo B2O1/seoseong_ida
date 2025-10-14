@@ -1,55 +1,77 @@
-<!-- <div class="cc_cafe_grid">
-  {% for cafe in cafes %}
-    <div class="cc_card">
-      {% if cafe.google_photo_url %}
-        <img class="cc_card_img" src="{{ cafe.google_photo_url }}" alt="{{ cafe.crawled_store_name|default:cafe.public_store_name }}">
-      {% else %}
-        <div style="height:180px;display:flex;align-items:center;justify-content:center;border:1px dashed #ddd;border-radius:8px;margin-bottom:10px;">
-          <small>사진 없음</small>
-        </div>
-      {% endif %}
+<div class="cc_slider">
+  <div class="cc_track" id="cafeSlider">
+    {% for cafe in cafes %}
+      {% with name=cafe.crawled_store_name|default:cafe.public_store_name %}
+      {% with address=cafe.address|default:"" %}
+      {% with q=name|add:" "|add:address %}
+        <a class="cc_card"
+           href="https://map.naver.com/v5/search/{{ q|urlencode }}"
+           target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"
+           style="text-decoration:none; color:inherit; display:block;">
+           
+          {% if cafe.google_photo_url %}
+            <img class="cc_card_img" src="{{ cafe.google_photo_url }}" alt="{{ name }}">
+          {% else %}
+            <div style="height:180px;display:flex;align-items:center;justify-content:center;border:1px dashed #ddd;border-radius:8px;margin-bottom:10px;">
+              <small>사진 없음</small>
+            </div>
+          {% endif %}
 
-      <h3 class="cc_card_title">{{ cafe.crawled_store_name|default:cafe.public_store_name }}</h3>
-      <p class="cc_card_address">{{ cafe.address }}</p>
-      <p class="cc_card_rating">★ {{ cafe.rating|default:"-" }}</p>
-    </div>
-  {% empty %}
-    <p>추천 카페가 없습니다.</p>
-  {% endfor %}
-</div> -->
+          <h3 class="cc_card_title">{{ name }}</h3>
+          <p class="cc_card_address">{{ address }}</p>
+          <p class="cc_card_rating">★ {{ cafe.rating|default:"-" }}</p>
+        </a>
+      {% endwith %}
+      {% endwith %}
+      {% endwith %}
+    {% empty %}
+      <p>추천 카페가 없습니다.</p>
+    {% endfor %}
+  </div>
 
-<div class="cc_cafe_grid">
-  {% for cafe in cafes %}
-    {% with name=cafe.crawled_store_name|default:cafe.public_store_name %}
-    {% with address=cafe.address|default:"" %}
-    {% with q=name|add:" "|add:address %}
-
-      <a class="cc_card"
-         href="https://map.naver.com/v5/search/{{ q|urlencode }}"
-         target="_blank"
-         rel="noopener noreferrer"
-         referrerpolicy="no-referrer"
-         style="text-decoration:none; color:inherit; display:block;">
-
-        {% if cafe.google_photo_url %}
-          <img class="cc_card_img"
-               src="{{ cafe.google_photo_url }}"
-               alt="{{ name }}">
-        {% else %}
-          <div style="height:180px;display:flex;align-items:center;justify-content:center;border:1px dashed #ddd;border-radius:8px;margin-bottom:10px;">
-            <small>사진 없음</small>
-          </div>
-        {% endif %}
-
-        <h3 class="cc_card_title">{{ name }}</h3>
-        <p class="cc_card_address">{{ address }}</p>
-        <p class="cc_card_rating">★ {{ cafe.rating|default:"-" }}</p>
-      </a>
-
-    {% endwith %}
-    {% endwith %}
-    {% endwith %}
-  {% empty %}
-    <p>추천 카페가 없습니다.</p>
-  {% endfor %}
+  <button class="cc_nav cc_prev" type="button">‹</button>
+  <button class="cc_nav cc_next" type="button">›</button>
 </div>
+
+<script>
+(function () {
+  const track = document.getElementById('cafeSlider');
+  if (!track) return;
+
+  const GAP = 24; // CSS gap과 동일하게
+  const card = track.querySelector('.cc_card');
+  const step = card ? (card.getBoundingClientRect().width + GAP) : 340;
+
+  // 자동 슬라이드
+  let timer = null;
+  const INTERVAL = 3000; // 3초마다 이동
+
+  function goNext() {
+    const nearEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - step - 4;
+    if (nearEnd) {
+      track.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      track.scrollBy({ left: step, behavior: 'smooth' });
+    }
+  }
+  function start() { stop(); timer = setInterval(goNext, INTERVAL); }
+  function stop()  { if (timer) { clearInterval(timer); timer = null; } }
+
+  // 마우스 올리면 일시정지, 떼면 재시작
+  track.addEventListener('mouseenter', stop);
+  track.addEventListener('mouseleave', start);
+  start();
+
+  // 버튼
+  const prevBtn = document.querySelector('.cc_prev');
+  const nextBtn = document.querySelector('.cc_next');
+  prevBtn?.addEventListener('click', () => {
+    track.scrollBy({ left: -step, behavior: 'smooth' });
+  });
+  nextBtn?.addEventListener('click', goNext);
+
+  // 키보드 접근
+  prevBtn?.addEventListener('keydown', (e) => { if (e.key === 'Enter') prevBtn.click(); });
+  nextBtn?.addEventListener('keydown', (e) => { if (e.key === 'Enter') nextBtn.click(); });
+})();
+</script>

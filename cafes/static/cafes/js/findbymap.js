@@ -212,10 +212,11 @@
     function getZoom(map) { return map.getZoom(); }
     function getActiveKeys() {
       return Array.from(document.querySelectorAll('.fm-cat-check'))
-        .filter(chk => chk.checked).map(chk => chk.dataset.key);
+        .filter(chk => chk.checked)
+        .map(chk => chk.dataset.key);
     }
     function matchesFilter(it, activeSet) {
-      if (!activeSet || activeSet.size === 0) return false;
+      if (!activeSet || activeSet.size === 0) return true;
       return it.categories.some(k => activeSet.has(k));
     }
 
