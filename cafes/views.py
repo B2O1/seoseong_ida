@@ -9,6 +9,10 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.conf import settings
 import requests
+from django.db import connection
+from django.db.models import Q, F, Window
+from django.db.models.functions import RowNumber, Coalesce
+
 
 def place_photo_redirect(request, place_id: str, photo_id: str):
     name = f"places/{place_id}/photos/{photo_id}"
@@ -54,11 +58,10 @@ def _to_float(v):
 def _rank_key(item):
     rating = item.get("rating")
     has_rating = rating is not None
-    review_cnt = item.get("total_review_count") or 0
     name = (item.get("crawled_store_name") or "").lower()
     # reverse=True로 정렬할 거라 rating/리뷰수는 큰 값이 위로 감
     # name은 reverse=True 때문에 Z→A가 되지만 영향은 미미 (동점자 tie-breaker 용)
-    return (has_rating, rating if rating is not None else -1.0, review_cnt, name)
+    return (has_rating, rating if rating is not None else -1.0, name)
 
 # ===============================
 # 헬퍼: 카테고리 균등 분포(라운드로빈)
@@ -123,7 +126,7 @@ def cafes_api(request):
     """
     bbox = request.GET.get("bbox")
     zoom = int(request.GET.get("zoom", 12))
-    page_size = max(50, min(int(request.GET.get("page_size", 500)), 1000))
+    page_size = max(50, min(int(request.GET.get("page_size", 2000)), 2000))
     try:
         offset = int(request.GET.get("page_token", "0"))
         if offset < 0:
@@ -187,8 +190,42 @@ def cafes_api(request):
         if q:
             qs = qs.filter(q)
 
-    # values 추출(여유분 크게: page_size * 10) → (이름,주소) dedupe
+    order_for_rep = [
+        F("rating").desc(nulls_last=True),
+        F("total_review_count").desc(nulls_last=True),
+        F("id").desc(),
+    ]
+    order_final = ["-rating", "-total_review_count", "-id"]
+
+    try:
+        if connection.vendor == "postgresql":
+            # (Postgres 전용) DISTINCT ON
+            qs = qs.order_by("crawled_store_name", "address", *order_for_rep).distinct(
+                "crawled_store_name", "address"
+            )
+        else:
+            # (범용) 윈도우 함수 ROW_NUMBER 파티션으로 대표 1행만
+            qs = (
+                qs.annotate(
+                    rn=Window(
+                        expression=RowNumber(),
+                        partition_by=[F("crawled_store_name"), F("address")],
+                        order_by=order_for_rep,
+                    )
+                )
+                .filter(rn=1)
+                .order_by(*order_final)
+            )
+    except Exception:
+        # (폴백) DB가 윈도우 함수도 안 될 때는 기존 파이썬 중복제거 경로 사용
+        pass
+
+    # 이후 그대로
     raw = list(qs.values(*use_fields)[offset : offset + page_size * 10])
+    print(f"[cafes_api] step1: DB에서 {len(raw)}개 불러옴 (offset={offset})")
+
+    # values 추출(여유분 크게: page_size * 10) → (이름,주소) dedupe
+    # raw = list(qs.values(*use_fields)[offset : offset + page_size * 10])
 
     seen = set()
     pool = []
@@ -226,7 +263,7 @@ def cafes_api(request):
             item["final_crawl_count"] = r.get("final_crawl_count") or 0
 
         pool.append(item)
-
+    print(f"[cafes_api] step2: (이름,주소) 기준 중복제거 후 {len(pool)}개 남음")
     # 기본 스코어링으로 먼저 정렬
     pool.sort(key=_rank_key, reverse=True)
 
@@ -258,6 +295,7 @@ def cafes_api(request):
         final_results.append(row)
 
     # offset 기반 토큰 (균등 분포로 실제 페이지 구성은 서버에서 함)
-    next_token = str(offset + page_size) if len(raw) >= page_size else None
+    # 추천
+    next_token = str(offset + page_size) if len(raw) == page_size * 10 else None
 
     return JsonResponse({"results": final_results, "next_page_token": next_token})

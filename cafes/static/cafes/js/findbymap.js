@@ -188,7 +188,7 @@
     let loading = false;
     let nextToken = null;           // 뷰포트 기반 토큰
     let listNextToken = null;       // 전역 리스트 토큰
-    const PAGE_SIZE = 500;
+    const PAGE_SIZE = 1000;
     let lastQueryKey = '';
     let didInitViewport = false;
     const FETCH_DEBOUNCE_MS = 250;
@@ -261,12 +261,23 @@
       }).join('');
       ensureActiveVisible();
     }
-
-    // 지도 토글
+    function inViewport(map, latlng) {
+      if (!map || !latlng) return false;
+      const b  = map.getBounds();
+      if (!b) return false;
+      const sw = b.getSW(), ne = b.getNE();
+      const lat = latlng.lat(), lng = latlng.lng();
+      return (lat >= sw.lat() && lat <= ne.lat() && lng >= sw.lng() && lng <= ne.lng());
+    }
     function applyFilterToMap() {
       const active = new Set(getActiveKeys());
+      const b = map.getBounds();
+
       for (const it of items) {
-        const shouldShow = matchesFilter(it, active);
+        const passFilter = matchesFilter(it, active);
+        const passViewport = !!b && inViewport(map, it.latlng);
+        const shouldShow = passFilter && passViewport;
+
         if (shouldShow) {
           if (!it.marker.getMap()) it.marker.setMap(map);
           it.hidden = false;
@@ -277,6 +288,22 @@
       }
       renderListFiltered();
     }
+    
+    // // 지도 토글
+    // function applyFilterToMap() {
+    //   const active = new Set(getActiveKeys());
+    //   for (const it of items) {
+    //     const shouldShow = matchesFilter(it, active);
+    //     if (shouldShow) {
+    //       if (!it.marker.getMap()) it.marker.setMap(map);
+    //       it.hidden = false;
+    //     } else {
+    //       if (it.marker.getMap()) it.marker.setMap(null);
+    //       it.hidden = true;
+    //     }
+    //   }
+    //   renderListFiltered();
+    // }
 
     // 항목/마커 생성
     function addMarkerItem(r, latlng) {
@@ -503,7 +530,10 @@
     });
 
     // 지도 이동 시: 뷰포트 로드
-    naver.maps.Event.addListener(map, 'idle', refreshForViewport);
+    naver.maps.Event.addListener(map, 'idle', () => {
+      applyFilterToMap();      // ← 먼저 화면 밖 마커 숨김
+      refreshForViewport();    // ← 그 다음 화면 안 데이터 fetch + 반영
+    });
 
     // 최초 호출
     refreshForViewport();

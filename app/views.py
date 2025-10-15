@@ -130,7 +130,7 @@ def home(request):
 
     all_recommended = []
     for field in flag_fields:
-        cafes = DfCafeFull.objects.filter(**{field: 1}).order_by('?')[:2]
+        cafes = DfCafeFull.objects.filter(**{field: 1}).order_by('?')[:1]
         all_recommended.extend(cafes)
 
     random.shuffle(all_recommended)
