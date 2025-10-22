@@ -144,14 +144,14 @@ def home(request):
 def search(request):
     return render(request, 'search.html')
 
-def posts_json(request):
-    data = list(Post.objects.values('id', 'title', 'content', 'created_at').order_by('-id'))
-    return JsonResponse(
-        data,
-        safe=False,
-        json_dumps_params={'ensure_ascii': False, 'indent': 2, 'default': str},
-        content_type='application/json; charset=utf-8'
-    )
+# def posts_json(request):
+#     data = list(Post.objects.values('id', 'title', 'content', 'created_at').order_by('-id'))
+#     return JsonResponse(
+#         data,
+#         safe=False,
+#         json_dumps_params={'ensure_ascii': False, 'indent': 2, 'default': str},
+#         content_type='application/json; charset=utf-8'
+#     )
 
 User = get_user_model()
 # 회원가입 (GET = 페이지, POST = 처리)

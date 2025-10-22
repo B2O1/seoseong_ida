@@ -8,5 +8,5 @@ urlpatterns = [
     path("login/", views.login_view, name="login"),      # 로그인
     path("logout/", views.logout_view, name="logout"),   # 로그아웃
     path('firebase/login/', views.firebase_login, name='firebase_login'),
-    path('posts/', views.posts_json, name='posts_json'),
+    # path('posts/', views.posts_json, name='posts_json'),
 ]
