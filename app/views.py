@@ -1,3 +1,24 @@
+<<<<<<< HEAD
+=======
+from django.shortcuts import render
+from django.http import JsonResponse
+
+# def posts_json(request):
+#     data = list(Post.objects.values('id', 'title', 'content', 'created_at').order_by('-id'))
+#     return JsonResponse(
+#         data,
+#         safe=False,
+#         json_dumps_params={'ensure_ascii': False, 'indent': 2, 'default': str},
+#         content_type='application/json; charset=utf-8'
+#     )
+# Create your views here.
+def home(request):
+    return render(request, 'home.html')
+def search(request):
+    return render(request, 'search.html')
+from django.contrib.auth.models import User
+from django.contrib import messages
+>>>>>>> origin/hyewon
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
@@ -9,6 +30,7 @@ from django.conf import settings
 import requests
 from cafes.models import DfCafeFull
 
+<<<<<<< HEAD
 from django.db.models import (
     Exists, OuterRef, FloatField, Q,
     F, Window, CharField, IntegerField
@@ -153,6 +175,8 @@ def search(request):
 #         content_type='application/json; charset=utf-8'
 #     )
 
+=======
+>>>>>>> origin/hyewon
 User = get_user_model()
 # 회원가입 (GET = 페이지, POST = 처리)
 def register(request):

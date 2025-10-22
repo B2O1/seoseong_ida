@@ -472,6 +472,9 @@ a {
   justify-content: center;
   position: relative;
   border: black;
+  max-height: 56vh; /* 화면 높이의 55%까지만 표시 */
+  overflow-y: auto; /* 넘치면 스크롤 생성 */
+  padding-right: 0.5rem;
 }
 .searh-page-header {
   position: relative;
@@ -487,6 +490,7 @@ a {
   gap: 30px;
   flex-wrap: wrap;
   justify-content: center;
+  list-style: none;
 }
 .banner-list li {
   display: flex;
@@ -496,7 +500,7 @@ a {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 15px;
   width: 300px;
-  height: 100px;
+  height: 80px;
   transition: transform 0.2s ease-in-out;
 }
 .banner-list li:hover {

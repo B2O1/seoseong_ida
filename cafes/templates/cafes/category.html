@@ -9,24 +9,20 @@
     <h3>오늘은 어떤 무드?</h3>
     <div class="tags">
       <!-- 버튼에 data-code로 실제 카테고리 값을 심어둡니다 (URL ?cat=값 으로 전달) -->
-      <button class="tag-btn" data-code="분좋카">분좋카 <span>()</span></button>
-      <button class="tag-btn" data-code="쾌좋카">쾌좋카 <span>()</span></button>
-      <button class="tag-btn" data-code="혼좋카">혼좋카 <span>()</span></button>
-      <button class="tag-btn" data-code="단좋카">단좋카 <span>()</span></button>
-      <button class="tag-btn" data-code="역세카">역세카 <span>()</span></button>
-      <button class="tag-btn" data-code="빵맛카">빵맛카 <span>()</span></button>
-      <button class="tag-btn" data-code="케맛카">케맛카 <span>()</span></button>
-      <button class="tag-btn" data-code="커맛카">커맛카 <span>()</span></button>
-      <button class="tag-btn" data-code="카공카">카공카 <span>()</span></button>
-      <button class="tag-btn" data-code="책좋카">책좋카 <span>()</span></button>
-      <button class="tag-btn" data-code="주피카">주피카 <span>()</span></button>
-      <button class="tag-btn" data-code="숨나카">숨나카 <span>()</span></button>
-      <button class="tag-btn" data-code="가좋카">가좋카 <span>()</span></button>
-      <button class="tag-btn" data-code="이걸안카">이걸안카 <span>()</span></button>
-      <button class="tag-btn" data-code="올베카">올베카 <span>()</span></button>
-      <button class="tag-btn" data-code="화청카">화청카 <span>()</span></button>
-      <button class="tag-btn" data-code="한옥카">한옥카 <span>()</span></button>
-      <button class="tag-btn" data-code="반동카">반동카 <span>()</span></button>
+      <button class="tag-btn" data-code="쾌좋카">쾌좋카</button>
+      <button class="tag-btn" data-code="혼좋카">혼좋카</button>
+      <button class="tag-btn" data-code="책좋카">책좋카</button>
+      <button class="tag-btn" data-code="이걸안카">이걸안카</button>
+      <button class="tag-btn" data-code="단좋카">단좋카</button>
+      <button class="tag-btn" data-code="커맛카">커맛카</button>
+      <button class="tag-btn" data-code="카공카">카공카</button>
+      <button class="tag-btn" data-code="화청카">화청카</button>
+      <button class="tag-btn" data-code="분좋카">분좋카</button>
+      <button class="tag-btn" data-code="디맛카">디맛카</button>
+      <button class="tag-btn" data-code="가좋카">가좋카</button>
+      <button class="tag-btn" data-code="반동카">반동카</button>
+      <button class="tag-btn" data-code="밤샘카페">밤샘카페</button>
+      <button class="tag-btn" data-code="한옥">한옥</button>
 
       <button id="applyFilters" type="button">적용하기</button>
     </div>
@@ -42,8 +38,8 @@
 
   <div class="search-page-wrapper">
     <ul class="banner-list">
-      {# ▶ 하드코딩 대신 반복 렌더링 #} {% for cafe in cafes %}
-      <li>
+      {% for cafe in cafes %}
+      <li onclick="openNaverMapPopup('{{ cafe.name|escapejs }}','{{ cafe.address|escapejs }}')" style="cursor: pointer">
         <div class="banner-list-content">
           {% comment %}
           <img
@@ -53,7 +49,15 @@
           />
           {% endcomment %}
           <h3>{{ cafe.name }}</h3>
-          <p>{{ cafe.description|default:"카페 설명이 준비 중입니다." }}</p>
+          {% comment %} 얘도 없는 애들이 있어서 어떻게 해야하나.. {% endcomment %} {% comment %}
+          <p>{{ cafe.time|default:"카페 설명이 준비 중입니다." }}</p>
+          {% endcomment %} {% if cafe.address %}
+          <p class="addr">{{ cafe.address }}</p>
+          {% endif %} {% comment %} 별점 없는 카페들도 있어서... {% endcomment %} {% comment %} {% if cafe.rating %}
+          <p class="rating">⭐ {{ cafe.rating|floatformat:2 }}</p>
+          {% endif %} {% endcomment %} {% if cafe.cats_display %}
+          <p style="font-weight: bold" class="category">{{ cafe.cats_display }}</p>
+          {% endif %}
         </div>
       </li>
       {% empty %}
@@ -62,23 +66,27 @@
     </ul>
   </div>
 
-  {# ▶ 페이지네이션(필요시) - 기존 cat, q 파라미터 유지 #} {% if page_obj %} {% comment %}
-  <nav class="pagination" aria-label="페이지네이션">
+  {% if page_obj %}
+  <nav
+    class="pagination"
+    aria-label="페이지네이션"
+    style="display: flex; gap: 0.75rem; align-items: center; justify-content: center; margin-top: 1.5rem"
+  >
     {% if page_obj.has_previous %}
-    <a
-      href="?{% for c in request.GET.getlist 'cat' %}cat={{ c|urlencode }}&{% endfor %}{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}"
-      >이전</a
-    >
+    <a class="px-3 py-1 border rounded" href="?page={{ page_obj.previous_page_number }}{{ qs_keep }}">이전</a>
+    {% else %}
+    <span class="px-3 py-1 border rounded opacity-50 cursor-not-allowed">이전</span>
     {% endif %}
-    <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+
+    <span class="text-sm">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+
     {% if page_obj.has_next %}
-    <a
-      href="?{% for c in request.GET.getlist 'cat' %}cat={{ c|urlencode }}&{% endfor %}{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}page={{ page_obj.next_page_number }}"
-      >다음</a
-    >
+    <a class="px-3 py-1 border rounded" href="?page={{ page_obj.next_page_number }}{{ qs_keep }}">다음</a>
+    {% else %}
+    <span class="px-3 py-1 border rounded opacity-50 cursor-not-allowed">다음</span>
     {% endif %}
   </nav>
-  {% endcomment %} {% endif %}
+  {% endif %}
 </div>
 {% endblock %} {% block script %}
 <script>
@@ -152,5 +160,26 @@
       });
     }
   });
+  // ✅ 네이버 지도 ‘웹사이트’를 새 창으로 여는 함수 (검색 기반)
+  function openNaverMapPopup(name, address, lat = null, lng = null) {
+    // 1) 좌표가 있으면 좌표 우선 (있을 때만 쓰고, 없다면 검색으로 fallback)
+    if (lat != null && lng != null) {
+      // 좌표 기반 열기 (웹): 공식 딥링크가 문서화가 약해서, 일반적으로는 검색이 더 호환성이 좋음.
+      // 좌표만으로 특정 장소가 안 잡힐 수 있어 검색로직로 fallback 추천.
+      const query = encodeURIComponent((name || '') + ' ' + (address || ''));
+      const url = `https://map.naver.com/p/search/${query}`; // 좌표 URL은 단말/버전에 따라 불안정 → 검색 권장
+      window.open(url, 'naverMapPopup');
+      return;
+    }
+
+    // 2) 주소/가게명 기반 검색 (가장 호환성 좋음)
+    if (!address && !name) {
+      alert('지도에서 검색할 정보가 없어요 😢');
+      return;
+    }
+    const query = encodeURIComponent(((name || '') + ' ' + (address || '')).trim());
+    const url = `https://map.naver.com/p/search/${query}`;
+    window.open(url, 'naverMapPopup');
+  }
 </script>
 {% endblock %}
