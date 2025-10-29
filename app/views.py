@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_GET
 from cafes.models import DfCafeFull, CafePhotoCache
 from django.db.models import (
     Exists, OuterRef, FloatField, Q,
@@ -118,10 +119,17 @@ def get_place_photo_url_with_cache(cafe, GOOGLE_API_KEY):
         if photo_ref else None
     )
 
+def _get_cached_photo_url_only(cafe, GOOGLE_API_KEY):
+    name = (getattr(cafe, "crawled_store_name", None) or getattr(cafe, "public_store_name", None) or "").strip()
+    address = (getattr(cafe, "address", "") or "").strip()
+    key = _norm_key(name, address)
 
-# ----------------------------
-# Views
-# ----------------------------
+    cache = CafePhotoCache.objects.filter(key=key).only("photo_ref").first()
+    if cache and cache.photo_ref:
+        return f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=640&photo_reference={cache.photo_ref}&key={GOOGLE_API_KEY}"
+    return None
+
+# 2) home()에서 캐시만 확인하도록 루프만 교체
 def home(request):
     GOOGLE_API_KEY = settings.GOOGLE_API_KEY
     flag_fields = [
@@ -136,11 +144,20 @@ def home(request):
         all_recommended.extend(cafes)
 
     random.shuffle(all_recommended)
+
+    # ✅ 캐시만 확인 (느린 외부 호출 금지)
     for c in all_recommended:
-        c.google_photo_url = get_place_photo_url_with_cache(c, GOOGLE_API_KEY)
+        c.google_photo_url = _get_cached_photo_url_only(c, GOOGLE_API_KEY)
 
     return render(request, "home.html", {"recommend_cafes": all_recommended})
 
+# 3) 클라이언트가 나중에 사진 요청하는 API
+@require_GET
+def cafe_photo_api(request, cafe_id):
+    cafe = get_object_or_404(DfCafeFull, pk=cafe_id)
+    # 캐시 미스일 때만 내부에서 Google 호출 (이미 너의 파일에 있는 함수 재사용)
+    url = get_place_photo_url_with_cache(cafe, settings.GOOGLE_API_KEY)
+    return JsonResponse({"url": url})
 
 def search(request):
     return render(request, "search.html")
