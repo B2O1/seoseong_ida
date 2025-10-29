@@ -66,6 +66,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    email = models.EmailField(blank=True, null=True)  # 추가
 
     objects = MyUserManager()
 

@@ -1,0 +1,10 @@
+class CrossOriginOpenerPolicyMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        # 팝업 허용
+        response['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
+        return response
+
