@@ -12,3 +12,4 @@ app/migrations/*.py
 .env
 .DS_Store
 seoseongida-firebase-adminsdk-fbsvc-fcf3c6b88a.json
+firebase_key.json
