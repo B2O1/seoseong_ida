@@ -11,4 +11,8 @@ app/migrations/*.py
 !app/migrations/__init__.py
 .env
 .DS_Store
+<<<<<<< HEAD
+=======
+seoseongida-firebase-adminsdk-fbsvc-fcf3c6b88a.json
+>>>>>>> origin/hammm
 firebase_key.json

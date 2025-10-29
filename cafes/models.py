@@ -9,7 +9,10 @@ from django.db import models
 
 
 class DfCafeFull(models.Model):
+<<<<<<< HEAD
     id = models.AutoField(primary_key=True)  # ← 명시적으로 ID 추가
+=======
+>>>>>>> origin/hammm
     public_store_name = models.CharField(max_length=255, blank=True, null=True)
     crawled_store_name = models.CharField(max_length=255, blank=True, null=True)
     category = models.CharField(max_length=50, blank=True, null=True)
@@ -41,12 +44,16 @@ class DfCafeFull(models.Model):
     animal_cafe = models.IntegerField(blank=True, null=True)
     night_cafe = models.IntegerField(blank=True, null=True)
     hanok_cafe = models.IntegerField(blank=True, null=True)
+<<<<<<< HEAD
     # google_place_id = models.CharField(max_length=128, blank=True, null=True, db_index=True)
     # google_photo_id = models.CharField(max_length=128, blank=True, null=True)
+=======
+>>>>>>> origin/hammm
 
     class Meta:
         managed = False
         db_table = 'df_cafe_full'
+<<<<<<< HEAD
 
 class CafePhotoCache(models.Model):
     key = models.CharField(max_length=255, unique=True, db_index=True)
@@ -58,3 +65,5 @@ class CafePhotoCache(models.Model):
 
     def __str__(self):
         return self.key
+=======
+>>>>>>> origin/hammm

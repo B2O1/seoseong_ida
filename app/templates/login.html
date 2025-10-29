@@ -2,7 +2,10 @@
 {% load static %}
 
 {% block content %}
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/hammm
 {% if messages %}
   <ul class="messages">
     {% for message in messages %}
@@ -10,6 +13,7 @@
     {% endfor %}
   </ul>
 {% endif %}
+<<<<<<< HEAD
     <script>  
       
     </script>
@@ -36,3 +40,86 @@
 
 {% block statics %}
 {% endblock %}
+=======
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+<script>
+  let auth = null;
+
+  // ✅ Firebase 초기화: 페이지 로드 완료 후 수행
+  window.addEventListener("load", () => {
+    fetch("/login/firebase/")
+      .then(response => response.json())
+      .then(firebaseConfig => {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+          console.log("✅ Firebase 초기화 완료");
+        }
+        auth = firebase.auth();
+      })
+      .catch(error => console.error("❌ Firebase 설정 불러오기 실패:", error));
+  });
+
+  async function googleLogin() {
+    if (!auth) {
+      alert("Firebase가 아직 초기화되지 않았습니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    try {
+      const result = await auth.signInWithPopup(provider);
+      const idToken = await result.user.getIdToken();
+
+      const res = await fetch("{% url 'firebase_login' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ idToken })
+      });
+
+      if (res.ok) {
+        window.location.href = "/";
+      } else {
+        console.error("서버 로그인 실패");
+      }
+
+    } catch (error) {
+      if (error.code === "auth/popup-closed-by-user") {
+        console.warn("사용자가 로그인 창을 닫았습니다.");
+      } else {
+        console.error("Google 로그인 실패:", error);
+      }
+    }
+  }
+</script>
+
+<div class="register-body">
+  <h1>로그인</h1>
+  <br>
+  <form class='sign_up_form' action="{% url 'login' %}" method='post'>
+    {% csrf_token %}
+    <input type='text' name='user_id' required placeholder='아이디'>
+    <input type='password' name='password' required placeholder='비밀번호'>
+    <button type='submit' class='sign_up_form_btn'>로그인</button>
+  </form>
+
+  <button onclick='googleLogin()'>Google로 로그인</button>
+
+  <section class="login_section">
+    <div class="already_signed_up">회원이 아니신가요?</div>
+    <a href="{% url 'register' %}">
+      <button class="login_button">회원가입</button>
+    </a>
+  </section>
+</div>
+{% endblock %}
+
+{% block statics %}{% endblock %}
+>>>>>>> origin/hammm
