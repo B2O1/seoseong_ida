@@ -155,3 +155,4 @@ def cafes_api(request):
     next_token = str(offset + page_size) if len(raw) >= page_size else None
 
     return JsonResponse({"results": results, "next_page_token": next_token})
+
