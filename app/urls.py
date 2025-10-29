@@ -7,13 +7,10 @@ urlpatterns = [
     path("register/", views.register, name="register"),  # 회원가입
     path("login/", views.login_view, name="login"),      # 로그인
     path("logout/", views.logout_view, name="logout"),   # 로그아웃
-<<<<<<< HEAD
     path('firebase/login/', views.firebase_login, name='firebase_login'),
     # path('posts/', views.posts_json, name='posts_json'),
     path("api/cafes/<int:cafe_id>/photo/", views.cafe_photo_api, name="cafe_photo_api"),
-=======
     # path('posts/', views.posts_json, name='posts_json'),
-    path('firebase_login/',views.firebase_login, name = 'firebase_login'),
+    # path('firebase_login/',views.firebase_login, name = 'firebase_login'),
     path('login/firebase/',views.firebase_config_view, name = 'firebase_login_view'),
->>>>>>> origin/hammm
 ]

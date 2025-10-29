@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django.views.generic import TemplateView
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.db.models import F, Q, Window
@@ -34,24 +33,10 @@ def place_photo_redirect(request, place_id: str, photo_id: str):
     raise Http404("Photo not available")
 from django.core.paginator import Paginator
 from django.db.models.functions import RowNumber
-=======
-# cafes/views.py (public_store_name → crawled_store_name 전면 교체)
-from django.views.generic import TemplateView
-from django.http import JsonResponse, HttpResponseBadRequest
-from django.db.models import F, Q
-from .models import DfCafeFull
-import hashlib, re
->>>>>>> origin/hammm
 
 class FindByMapView(TemplateView):
     template_name = "cafes/findbymap.html"
 
-<<<<<<< HEAD
-=======
-class CategoryView(TemplateView):
-    template_name = "cafes/category.html"
-
->>>>>>> origin/hammm
 _num_re = re.compile(r"(\d+(?:\.\d+)?)")
 
 def _clean_rating(val):
@@ -70,7 +55,6 @@ def _to_float(v):
         return float(v)
     except Exception:
         return None
-<<<<<<< HEAD
 # ===============================
 # 헬퍼: 정렬키(별점 desc, 리뷰수 desc, 이름 asc-ish)
 # ===============================
@@ -134,29 +118,18 @@ def _balance_by_categories(items, cat_keys, page_size):
 # ===============================
 # 메인: cafes_api (별점 높은 순 + 카테고리 균등 분포)
 # ===============================
-=======
-
->>>>>>> origin/hammm
 def cafes_api(request):
     """
     GET:
       - bbox=minLng,minLat,maxLng,maxLat (좌표 컬럼 있을 때만 사용)
       - zoom=int
-<<<<<<< HEAD
       - cats=CSV  (예: cats=book_cafe,study_cafe)
-=======
-      - cats=CSV
->>>>>>> origin/hammm
       - page_size=int (기본 500, 최대 1000)
       - page_token=offset (기본 0)
     """
     bbox = request.GET.get("bbox")
     zoom = int(request.GET.get("zoom", 12))
-<<<<<<< HEAD
     page_size = max(50, min(int(request.GET.get("page_size", 2000)), 2000))
-=======
-    page_size = max(50, min(int(request.GET.get("page_size", 500)), 1000))
->>>>>>> origin/hammm
     try:
         offset = int(request.GET.get("page_token", "0"))
         if offset < 0:
@@ -180,11 +153,7 @@ def cafes_api(request):
     has_latlongw = ("lat_n" in model_fields and "long_w" in model_fields)
 
     base_fields = [
-<<<<<<< HEAD
         "crawled_store_name",  # 이름
-=======
-        "crawled_store_name",  # ✅ 이름은 오직 이 필드만 사용
->>>>>>> origin/hammm
         "address","rating",
     ]
     if has_latlng:
@@ -224,7 +193,6 @@ def cafes_api(request):
         if q:
             qs = qs.filter(q)
 
-<<<<<<< HEAD
     order_for_rep = [
         F("rating").desc(nulls_last=True),
         F("total_review_count").desc(nulls_last=True),
@@ -266,24 +234,6 @@ def cafes_api(request):
     pool = []
     for r in raw:
         name = (r.get("crawled_store_name") or "").strip()
-=======
-    # 정렬: 리뷰수 → 크롤수 → 이름(✅ crawled_store_name)
-    order_fields = []
-    if "total_review_count" in model_fields:
-        order_fields.append(F("total_review_count").desc(nulls_last=True))
-    if "final_crawl_count" in model_fields:
-        order_fields.append(F("final_crawl_count").desc(nulls_last=True))
-    order_fields.append("crawled_store_name")
-    qs = qs.order_by(*order_fields)
-
-    # values 추출(여유분 ×5 → (이름,주소) dedupe → page_size 맞춤)
-    raw = list(qs.values(*use_fields)[offset : offset + page_size * 5])
-
-    seen = set()
-    results = []
-    for r in raw:
-        name = (r.get("crawled_store_name") or "").strip()  # ✅ 여기서도 교체
->>>>>>> origin/hammm
         addr = (r.get("address") or "").strip()
         key = (name, addr)
         if key in seen:
@@ -294,10 +244,6 @@ def cafes_api(request):
         lng = _to_float(r.get("lng")) or _to_float(r.get("long_w"))
         rating = _clean_rating(r.get("rating"))
 
-<<<<<<< HEAD
-=======
-        # ✅ 안정적 가짜 ID도 crawled_store_name 기준
->>>>>>> origin/hammm
         rid = hashlib.md5(f"{name}|{addr}".encode("utf-8")).hexdigest()[:12]
 
         cats = {}
@@ -305,20 +251,13 @@ def cafes_api(request):
             if k in r:
                 cats[k] = 1 if r.get(k) in (1, "1", True, "true", "True") else 0
 
-<<<<<<< HEAD
         item = {
             "id": rid,
             "crawled_store_name": name,
-=======
-        results.append({
-            "id": rid,
-            "crawled_store_name": name,  # ✅ 응답 키도 교체
->>>>>>> origin/hammm
             "address": addr,
             "rating": rating,
             "lat": lat,
             "lng": lng,
-<<<<<<< HEAD
             "cats": cats,  # 균등 분포용으로 묶어서 보관
         }
         if "total_review_count" in r:
@@ -607,15 +546,3 @@ class CategoryView(TemplateView):
         ctx["qs_keep"] = f"&{qs_keep}" if qs_keep else ""
 
         return ctx
-=======
-            **cats,
-        })
-        if len(results) >= page_size:
-            break
-
-    # next_page_token: offset 기반
-    next_token = str(offset + page_size) if len(raw) >= page_size else None
-
-    return JsonResponse({"results": results, "next_page_token": next_token})
-
->>>>>>> origin/hammm

@@ -96,19 +96,11 @@ a {
 }
 
 /* header-body.css */
-<<<<<<< HEAD
 .home-main-container{
-=======
-.main-container {
->>>>>>> origin/hammm
   display: flex;
   justify-content: center;
   margin: 0 auto;
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/hammm
 .carousel-item {
   width: 300px;
   height: 200px;
@@ -479,12 +471,9 @@ a {
   justify-content: center;
   position: relative;
   border: black;
-<<<<<<< HEAD
   max-height: 56vh; /* 화면 높이의 55%까지만 표시 */
   overflow-y: auto; /* 넘치면 스크롤 생성 */
   padding-right: 0.5rem;
-=======
->>>>>>> origin/hammm
 }
 .searh-page-header {
   position: relative;
@@ -500,10 +489,7 @@ a {
   gap: 30px;
   flex-wrap: wrap;
   justify-content: center;
-<<<<<<< HEAD
   list-style: none;
-=======
->>>>>>> origin/hammm
 }
 .banner-list li {
   display: flex;
@@ -513,11 +499,7 @@ a {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 15px;
   width: 300px;
-<<<<<<< HEAD
   height: 80px;
-=======
-  height: 100px;
->>>>>>> origin/hammm
   transition: transform 0.2s ease-in-out;
 }
 .banner-list li:hover {

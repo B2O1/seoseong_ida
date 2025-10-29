@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {% extends "reference.html" %}
 {% load static %}
 
@@ -36,42 +35,3 @@
 <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId={{ NAVER_MAPS_CLIENT_ID }}&submodules=geocoder" defer></script>
 <script src="{% static 'cafes/js/findbymap.js' %}" defer></script>
 {% endblock %}
-=======
-{% load static %}
-<!doctype html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8">
-  <title>내 카페 전부 보기</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  {# ✅ CSS는 head에 #}
-  <link rel="stylesheet" href="{% static 'cafes/css/findbymap.css' %}">
-  {# (선택) CSS 실패 대비 최소 높이 #}
-  <style>#map{min-height:400px}</style>
-</head>
-<body>
-  <div id="wrap">
-    <div id="map"></div>
-    <aside class="side">
-      <div id="info-boxes" class="list"></div>
-    </aside>
-  </div>
-
-  {# ✅ API URL 주입은 우리 JS보다 먼저 #}
-  {% url 'cafes:cafes_api' as cafes_api_url %}
-  <script id="findbymap-config" type="application/json">{"apiUrl":"{{ cafes_api_url }}"}</script>
-
-  {# (선택) 인증 실패 로그 #}
-  <script>
-    window.navermap_authFailure = function () {
-      console.error('NAVER MAP auth failed — check ncpKeyId & allowed URLs');
-    };
-  </script>
-
-  {# ✅ 네이버 지도(geocoder 포함) → 우리 JS 순서, 둘 다 defer #}
-  <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId={{ NAVER_MAPS_CLIENT_ID }}&submodules=geocoder" defer></script>
-  <script src="{% static 'cafes/js/findbymap.js' %}" defer></script>
-</body>
-</html>
->>>>>>> origin/hammm

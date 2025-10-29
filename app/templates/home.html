@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {% extends "reference.html" %}
 {% load static %}
 
@@ -20,40 +19,3 @@
 
 {# 슬라이드 스크립트도 제거 #}
 {% block script %}{% endblock %}
-=======
-{% extends "reference.html" %} {% block search %}
-{% include "partials/home_search.html" %}
-{% endblock %}
-{% block activate%}
-{% comment %} <main class = 'main-container'>
-    <div class='wrapper'>
-        <div class='carousel'>
-        	<div class='slide'>
-                <img src="../static/css/image/KakaoTalk_20221007_222113499.jpg" frameborder="0" allowfullscreen></img>
-            </div>
-            <div class='slide'>
-                <img src="/intro-to-html/123.png" frameborder="0" allowfullscreen></img>
-            </div>
-            <div class="slide">
-                <img src="/intro-to-html/112.jpg" frameborder="0" allowfullscreen></img>
-            </div>
-        </div>
-    </div>      
-</main> {% endcomment %}
-{% endblock %} 
-
-{%block script%} 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let currentIndex = 1;
-        const totalSlides = 5;
-        const slideInterval = 5000;
-
-        setInterval(() => {
-            document.getElementById(`home-s${currentIndex}`).checked = true;
-            currentIndex = (currentIndex % totalSlides) + 1;
-        }, slideInterval);
-    });
-</script>
-{%endblock%}
->>>>>>> origin/hammm

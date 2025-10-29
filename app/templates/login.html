@@ -2,10 +2,6 @@
 {% load static %}
 
 {% block content %}
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/hammm
 {% if messages %}
   <ul class="messages">
     {% for message in messages %}
@@ -13,34 +9,6 @@
     {% endfor %}
   </ul>
 {% endif %}
-<<<<<<< HEAD
-    <script>  
-      
-    </script>
-      <div class="register-body">
-          <h1>로그인</h1>
-          <br>
-          <form class='sign_up_form' action="{% url 'login' %}" method = 'post'>
-            {% csrf_token %}
-            <input type='text' name='user_id' required placeholder='아이디'>
-            <input type='password' name='password' required placeholder='비밀번호'>
-            <button type='submit' class ='sign_up_form_btn'>로그인</button>
-          </form>
-          {% comment %} <button type="button" onclick="googleLogin(event); return false;">Google로 로그인</button> {% endcomment %}
-          <section class="login_section">
-              <div class="already_signed_up">회원이 아니신가요?</div>
-              <a href="{% url 'register' %}">
-                  <button class="login_button">회원가입</button>
-              </a>
-          </section>
-      </div>
-
-    <!-- </div> -->
-{% endblock %}
-
-{% block statics %}
-{% endblock %}
-=======
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -122,4 +90,3 @@
 {% endblock %}
 
 {% block statics %}{% endblock %}
->>>>>>> origin/hammm
