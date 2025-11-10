@@ -1,22 +1,98 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
-from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-from django.shortcuts import get_object_or_404
-from django.views.decorators.http import require_GET
-from cafes.models import DfCafeFull, CafePhotoCache
-from django.db.models import (
-    Exists, OuterRef, FloatField, Q,
-    F, Window, CharField, IntegerField
-)
-from django.db.models.functions import Cast, RowNumber
-from django.db.models.expressions import Func, Value
-
 import json
 import random
 import requests
+import firebase_admin
+from firebase_admin import auth, credentials
+from django.conf import settings
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import (
+    Exists, OuterRef, FloatField, Q, F, Window, CharField, IntegerField
+)
+from django.db.models.functions import Cast, RowNumber
+from django.db.models.expressions import Func, Value
+from cafes.models import DfCafeFull, CafePhotoCache
+from .models import FaqPost, FaqComment
+from django import forms
+
+class FaqAnswerForm(forms.ModelForm):
+    class Meta:
+        model = FaqPost
+        fields = ['answer']
+
+@staff_member_required
+def faq_answer(request, pk):
+    item = get_object_or_404(FaqPost, pk=pk)
+    form = FaqAnswerForm(request.POST or None, instance=item)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("faq_detail", pk=pk)
+    return render(request, "faq-answer.html", {"item": item, "form": form})
+class FaqCommentForm(forms.ModelForm):
+    class Meta:
+        model = FaqComment
+        fields = ["content"]
+        widgets = {
+            "content": forms.Textarea(attrs={"rows": 3, "placeholder": "댓글을 입력하세요"}),
+        }
+
+def faq_detail(request, pk):
+    item = get_object_or_404(FaqPost, pk=pk)
+    comments = item.comments.all()
+
+    if request.user.is_authenticated:
+        if request.method == "POST" and request.POST.get("form_type") == "comment":
+            cform = FaqCommentForm(request.POST)
+            if cform.is_valid():
+                comment = cform.save(commit=False)
+                comment.post = item
+                comment.author = request.user.username
+                comment.is_staff = request.user.is_staff  # ✅ 여기서 자동 기록
+                comment.save()
+                return redirect("faq_detail", pk=item.pk)
+        else:
+            cform = FaqCommentForm()
+    else:
+        cform = None
+
+    return render(request, "faq-detail.html", {
+        "item": item,
+        "comments": comments,
+        "cform": cform,
+    })
+
+# (선택) 관리자만 댓글 삭제
+@staff_member_required
+def faq_comment_delete(request, cid):
+    comment = get_object_or_404(FaqComment, pk=cid)
+    post_id = comment.post_id
+    comment.delete()
+    return redirect("faq_detail", pk=post_id)
+
+class FaqForm(forms.ModelForm):
+    class Meta:
+        model = FaqPost
+        fields = ['name', 'email', 'question']
+
+def faq_list(request):
+    items = FaqPost.objects.order_by("-created_at")
+    return render(request, "faq.html", {"items": items})
+@login_required
+def faq_write(request):
+    if request.method == "POST":
+        form = FaqForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("faq_list")
+    else:
+        form = FaqForm()
+    return render(request, "faq-write.html", {"form": form})
 
 
 # ----------------------------

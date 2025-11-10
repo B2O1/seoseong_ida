@@ -18,8 +18,15 @@
       </div>
       <div class="reference-right-section">
         <a href="/faq/" class="FAQ">문의</a>
-        <a href="/login/" class="login">로그인</a>
-        <a href="/register/" class="createaccount">회원가입</a>
+        {% if request.user.is_authenticated %}
+          <span class="user-info">
+            {{ request.user.username }} 님
+            <a href="{% url 'logout' %}" class="logout">로그아웃</a>
+          </span>
+        {% else %}
+          <a href="/login/" class="login">로그인</a>
+          <a href="/register/" class="createaccount">회원가입</a>
+        {% endif %}
       </div>
     </section>
     {% block search %}{% endblock %} {% block activate %}{% endblock %} {% block login %}{% endblock %} {% comment %}

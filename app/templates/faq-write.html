@@ -1,0 +1,40 @@
+{% extends "reference.html" %}
+{% load static %}
+
+{% block activate %}
+<div class="faq-container">
+  <h1 class="faq-title mb-4">문의 작성</h1>
+
+  <form method="post" class="faq-form">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="faq-field">
+      {{ form.name.label_tag }}
+      {{ form.name }}
+      {{ form.name.errors }}
+    </div>
+    <div class="faq-field">
+      {{ form.email.label_tag }}
+      {{ form.email }}
+      {{ form.email.errors }}
+    </div>
+    <div class="faq-field">
+      {{ form.question.label_tag }}
+      {{ form.question }}
+      {{ form.question.errors }}
+    </div>
+    <div class="faq-actions">
+      <button class="faq-btn faq-primary" type="submit">등록</button>
+      <a href="{% url 'faq_list' %}" class="faq-btn">취소</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<style>
+  .faq-form{display:flex;flex-direction:column;gap:16px;}
+  .faq-field label{display:block;font-weight:600;margin-bottom:6px;}
+  input,textarea{width:100%;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:1rem;}
+</style>
+{% endblock %}

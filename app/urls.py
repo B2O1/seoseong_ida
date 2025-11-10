@@ -13,4 +13,9 @@ urlpatterns = [
     # path('posts/', views.posts_json, name='posts_json'),
     # path('firebase_login/',views.firebase_login, name = 'firebase_login'),
     path('login/firebase/',views.firebase_config_view, name = 'firebase_login_view'),
+    path("faq/", views.faq_list, name="faq_list"),           # 목록
+    path("faq/write/", views.faq_write, name="faq_write"),   # 작성 (faq-write.html)
+    path("faq/<int:pk>/", views.faq_detail, name="faq_detail"),  # ← 상세 보기
+    path("faq/<int:pk>/answer/", views.faq_answer, name="faq_answer"),
+    path("faq/comment/<int:cid>/delete/", views.faq_comment_delete, name="faq_comment_delete"),
 ]
