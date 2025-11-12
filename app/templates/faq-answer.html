@@ -1,6 +1,6 @@
 {% extends "reference.html" %}
 {% load static %}
-
+{% load tz %} 
 {% block activate %}
 <div class="faq-container">
   <h1 class="faq-title">관리자 답변</h1>
@@ -9,7 +9,7 @@
     <div class="faq-meta">
       <!-- ✅ 이름 대신 '관리자'로 고정 표시, 이메일 제거 -->
       <span>관리자</span>
-      <span>· {{ item.created_at|date:"Y.m.d H:i" }}</span>
+      <span>· {% localtime on %}{{ item.created_at|date:"Y.m.d H:i" }}{% endlocaltime %}</span>
     </div>
     <hr style="margin:12px 0; border:0; border-top:1px solid #ddd;">
     <p class="faq-item-desc" style="white-space:pre-line;">{{ item.question }}</p>

@@ -275,7 +275,8 @@ def cafe_photo_api(request, cafe_id):
 
 def search(request):
     return render(request, "search.html")
-
+def mypage(request):
+    return render(request, "mypage.html")
 
 User = get_user_model()
 
@@ -329,81 +330,6 @@ def login_page(request):
     return render(request, 'login.html', {
         'firebase_config': settings.FIREBASE_CONFIG
     })
-
-
-# @csrf_exempt
-# def firebase_login(request):
-#     if request.method == "POST":
-#         print("📩 request.body:", request.body)  # ✅ 추가
-#         body = json.loads(request.body)
-#         id_token = body.get("idToken")
-
-#         try:
-#             # 1. Firebase 토큰 검증
-#             decoded_token = auth.verify_id_token(id_token)
-#             uid = decoded_token["uid"]
-#             email = decoded_token.get("email")
-
-#             # 2. Django 유저 생성 or 불러오기
-#             user, created = User.objects.get_or_create(
-#                 username=uid,
-#                 defaults={"email": email}
-#             )
-
-#             # 3. 세션 로그인
-#             login(request, user)
-
-#             return JsonResponse({"status": "success"})
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=400)
-
-# @csrf_exempt
-# def firebase_login(request):
-#     if request.method == "POST":
-#         # 🔹 1. 요청 본문(raw body) 확인
-#         print("📩 [firebase_login] Raw request body:", request.body)
-
-#         # 🔹 2. JSON 디코딩 시도
-#         try:
-#             body = json.loads(request.body)
-#         except json.JSONDecodeError as e:
-#             print("❌ JSON 파싱 실패:", e)
-#             return JsonResponse({"error": "Invalid JSON format"}, status=400)
-
-#         # 🔹 3. idToken 추출
-#         id_token = body.get("idToken")
-#         print("🔥 [firebase_login] idToken:", id_token)
-
-#         if not id_token:
-#             return JsonResponse({"error": "idToken not provided"}, status=400)
-
-#         try:
-#             # 🔹 4. Firebase 토큰 검증
-#             decoded_token = auth.verify_id_token(id_token)
-#             uid = decoded_token.get("uid")
-#             email = decoded_token.get("email")
-#             print(f"✅ Firebase 인증 성공: uid={uid}, email={email}")
-
-#             # 🔹 5. Django 유저 생성 or 가져오기
-#             from django.contrib.auth import get_user_model, login
-#             User = get_user_model()
-
-#             user, created = User.objects.get_or_create(
-#                 username=uid,
-#                 defaults={"email": email or ""}
-#             )
-
-#             # 🔹 6. Django 세션 로그인 처리
-#             login(request, user)
-#             print("🎉 Django 세션 로그인 완료:", user.username)
-
-#             return JsonResponse({"status": "success"})
-#         except Exception as e:
-#             print("🚨 Firebase 인증 에러:", e)
-#             return JsonResponse({"error": str(e)}, status=400)
-
-#     # 🔹 GET 또는 다른 메서드일 경우
-#     return JsonResponse({"error": "POST method required"}, status=405)        
 
 def _email_local_for_display(email: str) -> str:
     if not email:

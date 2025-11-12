@@ -1,6 +1,6 @@
 {% extends "reference.html" %}
 {% load static %}
-
+{% load tz %} 
 {% block activate %}
 <div class="faq-container">
   <div class="faq-header">
@@ -23,7 +23,7 @@
           <h2 class="faq-item-title">{{ item.question|truncatechars:60 }}</h2>
           <div class="faq-meta">
             <span>{{ item.name }}</span>
-            <span>· {{ item.created_at|date:"Y.m.d H:i" }}</span>
+            <span>· {% localtime on %}{{ item.created_at|date:"Y.m.d H:i" }}{% endlocaltime %}</span>
           </div>
         </a>
       {% endfor %}

@@ -1,6 +1,6 @@
 {% extends "reference.html" %}
 {% load static %}
-
+{% load tz %} 
 {% block activate %}
 <div class="faq-container">
   <h1 class="faq-title">문의 상세</h1>
@@ -16,7 +16,7 @@
   <div class="faq-item" style="margin-top:8px;">
     <div class="faq-meta">
       <span>{{ item.name }}</span>
-      <span>· {{ item.created_at|date:"Y.m.d H:i" }}</span>
+      <span>· {% localtime on %}{{ item.created_at|date:"Y.m.d H:i" }}{% endlocaltime %}</span>
       <span>· {{ item.email|default:"이메일 없음" }}</span>
     </div>
     <hr style="margin:12px 0; border:0; border-top:1px solid #ddd;">
