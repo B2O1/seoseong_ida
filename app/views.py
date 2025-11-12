@@ -18,6 +18,19 @@ import json
 import random
 import requests
 
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import get_user_model
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.conf import settings
+import firebase_admin
+from firebase_admin import auth, credentials
+
+
 
 # ----------------------------
 # Google Place Photo helpers
@@ -293,4 +306,3 @@ def firebase_login(request):
 
 def firebase_config_view(request):
     return JsonResponse(settings.FIREBASE_CONFIG)
-
