@@ -58,11 +58,8 @@
   text-decoration: none;
   justify-content: center;
 }
-
 .FAQ,
 .login,
-.mypage,
-.logout,
 .createaccount {
   position: relative;
   padding: 5px;

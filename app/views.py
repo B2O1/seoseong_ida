@@ -1,34 +1,137 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
-from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-from django.shortcuts import get_object_or_404
-from django.views.decorators.http import require_GET
-from cafes.models import DfCafeFull, CafePhotoCache
-from django.db.models import (
-    Exists, OuterRef, FloatField, Q,
-    F, Window, CharField, IntegerField
-)
-from django.db.models.functions import Cast, RowNumber
-from django.db.models.expressions import Func, Value
-
 import json
 import random
 import requests
-
-from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth import get_user_model
-import json
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from django.conf import settings
 import firebase_admin
 from firebase_admin import auth, credentials
+from django.conf import settings
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import (
+    Exists, OuterRef, FloatField, Q, F, Window, CharField, IntegerField
+)
+from django.db.models.functions import Cast, RowNumber
+from django.db.models.expressions import Func, Value
+from cafes.models import DfCafeFull, CafePhotoCache
+from .models import FaqPost, FaqComment
+from django import forms
+
+class FaqAnswerForm(forms.ModelForm):
+    class Meta:
+        model = FaqPost
+        fields = ['answer']
+
+@staff_member_required
+def faq_answer(request, pk):
+    item = get_object_or_404(FaqPost, pk=pk)
+    form = FaqAnswerForm(request.POST or None, instance=item)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("faq_detail", pk=pk)
+    return render(request, "faq-answer.html", {"item": item, "form": form})
+class FaqCommentForm(forms.ModelForm):
+    class Meta:
+        model = FaqComment
+        fields = ["content"]
+        widgets = {
+            "content": forms.Textarea(attrs={"rows": 3, "placeholder": "댓글을 입력하세요"}),
+        }
+
+def faq_detail(request, pk):
+    item = get_object_or_404(FaqPost, pk=pk)
+    comments = item.comments.all()
+
+    if request.user.is_authenticated:
+        if request.method == "POST" and request.POST.get("form_type") == "comment":
+            cform = FaqCommentForm(request.POST)
+            if cform.is_valid():
+                comment = cform.save(commit=False)
+                comment.post = item
+                comment.author = request.user.username
+                comment.is_staff = request.user.is_staff  # ✅ 여기서 자동 기록
+                comment.save()
+                return redirect("faq_detail", pk=item.pk)
+        else:
+            cform = FaqCommentForm()
+    else:
+        cform = None
+
+    return render(request, "faq-detail.html", {
+        "item": item,
+        "comments": comments,
+        "cform": cform,
+    })
+
+# (선택) 관리자만 댓글 삭제
+@staff_member_required
+def faq_comment_delete(request, cid):
+    comment = get_object_or_404(FaqComment, pk=cid)
+    post_id = comment.post_id
+    comment.delete()
+    return redirect("faq_detail", pk=post_id)
+
+class FaqForm(forms.ModelForm):
+    class Meta:
+        model = FaqPost
+        fields = ['name', 'email', 'question']
+
+def faq_list(request):
+    items = FaqPost.objects.order_by("-created_at")
+    return render(request, "faq.html", {"items": items})
+
+def _display_name_from_session_or_user(request):
+    # 세션에 우리가 넣어둔 표시명(없는 경우 username)
+    return (request.session.get("display_name")
+            or getattr(request.user, "username", "")
+            or "")
+
+@login_required
+def faq_write(request):
+    if request.method == "POST":
+        form = FaqForm(request.POST)
+
+        # 로그인 상태라면 name/email은 사용자가 뭘 보내든 서버에서 덮어씀
+        if request.user.is_authenticated:
+            # 폼 유효성 때문에 required 완화
+            if "name" in form.fields:
+                form.fields["name"].required = False
+            if "email" in form.fields:
+                form.fields["email"].required = False
+
+        if form.is_valid():
+            obj = form.save(commit=False)
+
+            if request.user.is_authenticated:
+                obj.email = (getattr(request.user, "email", "") or "")
+                obj.name  = _display_name_from_session_or_user(request)
+                # 익명 사용자 우회 방지로 여기서 강제 세팅 (폼 값 무시)
+            else:
+                # 비로그인 사용자는 폼 입력 그대로 사용
+                pass
+
+            obj.save()
+            messages.success(request, "문의가 등록되었습니다.")
+            return redirect("faq_list")
+    else:
+        # GET 폼 준비
+        form = FaqForm()
+        if request.user.is_authenticated:
+            # 화면에서는 숨길 거지만, 혹시 폼이 필수로 되어 있으면 HiddenInput으로 처리
+            if "name" in form.fields:
+                form.fields["name"].widget = forms.HiddenInput()
+                form.fields["name"].required = False
+                form.initial["name"] = _display_name_from_session_or_user(request)
+            if "email" in form.fields:
+                form.fields["email"].widget = forms.HiddenInput()
+                form.fields["email"].required = False
+                form.initial["email"] = getattr(request.user, "email", "")
+    return render(request, "faq-write.html", {"form": form})
+
 
 # ----------------------------
 # Google Place Photo helpers
@@ -172,7 +275,8 @@ def cafe_photo_api(request, cafe_id):
 
 def search(request):
     return render(request, "search.html")
-
+def mypage(request):
+    return render(request, "mypage.html")
 
 User = get_user_model()
 
@@ -227,32 +331,14 @@ def login_page(request):
         'firebase_config': settings.FIREBASE_CONFIG
     })
 
-
-# @csrf_exempt
-# def firebase_login(request):
-#     if request.method == "POST":
-#         print("📩 request.body:", request.body)  # ✅ 추가
-#         body = json.loads(request.body)
-#         id_token = body.get("idToken")
-
-#         try:
-#             # 1. Firebase 토큰 검증
-#             decoded_token = auth.verify_id_token(id_token)
-#             uid = decoded_token["uid"]
-#             email = decoded_token.get("email")
-
-#             # 2. Django 유저 생성 or 불러오기
-#             user, created = User.objects.get_or_create(
-#                 username=uid,
-#                 defaults={"email": email}
-#             )
-
-#             # 3. 세션 로그인
-#             login(request, user)
-
-#             return JsonResponse({"status": "success"})
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=400)
+def _email_local_for_display(email: str) -> str:
+    if not email:
+        return ""
+    local, _, domain = email.partition("@")
+    local = local.split("+", 1)[0]
+    if domain.lower() in ("gmail.com", "googlemail.com"):
+        local = local.replace(".", "")
+    return local or ""
 
 @csrf_exempt
 def firebase_login(request):
@@ -281,29 +367,54 @@ def firebase_login(request):
             email = decoded_token.get("email")
             print(f"✅ Firebase 인증 성공: uid={uid}, email={email}")
 
-            # 🔹 5. Django 유저 생성 or 가져오기
+            # 🔹 5. Django 유저 생성 or 가져오기 (이메일 우선 매핑)
             from django.contrib.auth import get_user_model, login
             User = get_user_model()
 
-            user, created = User.objects.get_or_create(
-                username=uid,
-                defaults={"email": email or ""}
-            )
+            # 이메일이 없을 수도 있는 공급자 대비
+            if not email:
+                email = f"{uid}@autogen.firebase"
+                print(f"ℹ️ email이 없어 임시 이메일 사용: {email}")
 
-            # 🔹 6. Django 세션 로그인 처리
+            # 5-1) 이메일로 기존 유저 우선 탐색
+            user = User.objects.filter(email__iexact=email).first()
+
+            if not user:
+                # 5-2) 없으면 새로 생성 — 기존 구조 최대한 유지하되 username은 깔끔하게
+                #     (원래는 uid를 username으로 썼지만, 이메일 local-part를 우선 사용)
+                local_part = email.split("@")[0]
+                # 너무 과하게 정규화/슬러그화하지 않고 최소 변경만: 길이 제한 정도
+                username = (local_part or uid)[:24]
+
+                user = User.objects.create_user(
+                    username=username,
+                    email=email,
+                    password=None  # 비밀번호 로그인은 사용하지 않음 (Firebase 세션 사용)
+                )
+                print(f"🆕 새 사용자 생성: username={user.username}, email={user.email}")
+            else:
+                print(f"🔁 기존 사용자 로그인: username={user.username}, email={user.email}")
+            display_name = _email_local_for_display(email)
+            request.session["display_name"] = display_name
+            # 🔹 6. Django 세션 로그인 처리 (그대로 유지)
             login(request, user)
             print("🎉 Django 세션 로그인 완료:", user.username)
 
+            # 🔹 응답 형태도 그대로 유지 (최소 변경)
             return JsonResponse({"status": "success"})
         except Exception as e:
             print("🚨 Firebase 인증 에러:", e)
             return JsonResponse({"error": str(e)}, status=400)
 
-    # 🔹 GET 또는 다른 메서드일 경우
-    return JsonResponse({"error": "POST method required"}, status=405)        
+    # 🔹 GET 또는 다른 메서드일 경우 (그대로 유지)
+    return JsonResponse({"error": "POST method required"}, status=405)
 
 def firebase_config_view(request):
     return JsonResponse(settings.FIREBASE_CONFIG)
 
-def mypage(request):
-    return render(request, "mypage.html")
+@csrf_exempt
+def firebase_logout(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST only"}, status=405)
+    logout(request)  # Django 세션 종료
+    return JsonResponse({"ok": True})
