@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    {% load static %}
+    {% load static %} {% load tz %}
     <link rel="stylesheet" href="{% static 'css/total.css' %}" />
   </head>
   <body id="reference-wrap">
@@ -22,6 +22,13 @@
         <a href="{% url 'logout' %}" class="logout">로그아웃</a>
         {% else %}
         <a href="/faq/" class="FAQ">문의</a>
+        {% if request.user.is_authenticated %}
+        <span class="user-info">
+          {{ request.session.display_name|default:request.user.username }} 님
+          <a href="/mypage" class="logout">마이페이지</a>
+          <a href="{% url 'logout' %}" class="logout">로그아웃</a>
+        </span>
+        {% else %}
         <a href="/login/" class="login">로그인</a>
         <a href="/register/" class="createaccount">회원가입</a>
         {% endif %}

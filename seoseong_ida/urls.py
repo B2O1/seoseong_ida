@@ -16,11 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# from cafes.views import cafes_json
+from django.http import HttpResponse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # 페이지 렌더링
     path('', include('app.urls')),
-    path("cafes/", include(("cafes.urls", "cafes"), namespace="cafes")), # http://127.0.0.1:8000/cafes/
+    path("cafes/", include(("cafes.urls", "cafes"), namespace="cafes")),
 ]

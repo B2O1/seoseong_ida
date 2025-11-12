@@ -1,0 +1,140 @@
+{% extends "reference.html" %}
+{% load static %}
+{% load tz %} 
+{% block activate %}
+<div class="faq-container">
+  <h1 class="faq-title">문의 상세</h1>
+
+  {# 상단 액션: 목록 / (관리자만) 답변 작성/수정 #}
+  <div class="faq-actions" style="display:flex; gap:8px; margin-bottom:8px;">
+    <a href="{% url 'faq_list' %}" class="faq-btn">목록으로</a>
+    {% if request.user.is_staff %}
+      <a href="{% url 'faq_answer' item.pk %}" class="faq-btn faq-primary">답변 작성/수정</a>
+    {% endif %}
+  </div>
+
+  <div class="faq-item" style="margin-top:8px;">
+    <div class="faq-meta">
+      <span>{{ item.name }}</span>
+      <span>· {% localtime on %}{{ item.created_at|date:"Y.m.d H:i" }}{% endlocaltime %}</span>
+      <span>· {{ item.email|default:"이메일 없음" }}</span>
+    </div>
+    <hr style="margin:12px 0; border:0; border-top:1px solid #ddd;">
+    <p class="faq-item-desc" style="white-space:pre-line;">{{ item.question }}</p>
+  </div>
+
+  {# 관리자 답변 #}
+  {% if item.answer %}
+    <div class="faq-item" style="margin-top:16px; background:#f6fdf6; border-color:#cce8cc;">
+      <div class="faq-meta" style="color:#1d7f1d; font-weight:700;">관리자 답변</div>
+      <hr style="margin:12px 0; border:0; border-top:1px solid #cce8cc;">
+      <p style="white-space:pre-line;">{{ item.answer }}</p>
+    </div>
+  {% endif %}
+
+  {# 댓글 영역 #}
+  <div class="faq-item" style="margin-top:16px;">
+    <div class="faq-meta" style="font-weight:700;">댓글 {{ comments|length }}개</div>
+
+    {# 댓글 목록 #}
+    <div class="faq-list" style="margin-top:12px;">
+      {% if comments %}
+        {% for c in comments %}
+          <div class="faq-comment-item {% if c.is_staff %}faq-comment-admin{% endif %}">
+            <div class="faq-meta">
+              <span>{{ c.author }}</span>
+              <span>· {{ c.created_at|date:"Y.m.d H:i" }}</span>
+              {% if c.is_staff %}
+                <span class="faq-admin-badge">관리자</span>
+              {% endif %}
+            </div>
+            <p style="margin-top:6px; white-space:pre-line;">{{ c.content }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="faq-empty">아직 댓글이 없습니다.</div>
+      {% endif %}
+    </div>
+
+    {# ✅ 로그인한 사용자만 댓글 폼 표시 #}
+    {% if request.user.is_authenticated %}
+    <form method="post" class="faq-form" style="margin-top:16px;">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="comment">
+
+      {# ✅ 로그인 사용자 표시 (이메일 @앞부분 표시) #}
+      <div class="faq-field">
+        <label>작성자</label>
+        <input
+          type="text"
+          value="{{ request.session.display_name|default:request.user.username }}"
+          readonly
+          style="background:#f9f9f9;"
+        >
+      </div>
+
+      <div class="faq-field">
+        {{ cform.content.label_tag }}{{ cform.content }}
+        {{ cform.content.errors }}
+      </div>
+      <button type="submit" class="faq-btn faq-primary">댓글 등록</button>
+    </form>
+  {% else %}
+    <div class="faq-empty" style="margin-top:16px;">
+      댓글 작성은 로그인 후 이용할 수 있습니다.<br>
+      <a href="{% url 'login' %}?next={{ request.path }}" class="faq-btn faq-primary" style="margin-top:8px; display:inline-block;">
+        로그인하기
+      </a>
+    </div>
+  {% endif %}
+  </div>
+
+  {# 하단에도 액션 배치(편의) #}
+  <div class="faq-actions" style="display:flex; gap:8px; margin-top:16px;">
+    <a href="{% url 'faq_list' %}" class="faq-btn">목록으로</a>
+    {% if request.user.is_staff %}
+      <a href="{% url 'faq_answer' item.pk %}" class="faq-btn faq-primary">답변 작성/수정</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<style>
+  .faq-container { max-width:760px; margin:0 auto; padding:24px 16px 56px; }
+  .faq-title { font-size:1.5rem; font-weight:700; margin:0 0 12px; }
+  .faq-item { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:20px; }
+  .faq-meta { font-size:0.9rem; color:#666; display:flex; gap:8px; flex-wrap:wrap; }
+  .faq-btn { appearance:none; border:1px solid #e5e7eb; background:#fff; color:#111; border-radius:12px; padding:10px 14px; font-weight:600; text-decoration:none; display:inline-block; }
+  .faq-btn.faq-primary { background:#111; color:#fff; border-color:#111; }
+  .faq-list { display:grid; grid-template-columns:1fr; gap:10px; }
+  .faq-empty { text-align:center; color:#666; border:1px dashed #e5e7eb; background:#fff; padding:16px; border-radius:12px; }
+  .faq-form { display:flex; flex-direction:column; gap:12px; }
+  .faq-field label { display:block; font-weight:600; margin-bottom:6px; }
+  .faq-field input, .faq-field textarea { width:100%; border:1px solid #ddd; border-radius:8px; padding:10px; font-size:1rem; }
+
+  /* ✅ 댓글 공통 스타일 */
+  .faq-comment-item {
+    padding:12px;
+    border-radius:12px;
+    border:1px solid #e5e7eb;
+    background:#fff;
+  }
+
+  /* ✅ 관리자 댓글 강조 */
+  .faq-comment-admin {
+    background:#f6fdf6;          /* 연한 연두색 배경 */
+    border-color:#cce8cc;        /* 테두리도 부드럽게 */
+  }
+
+  /* ✅ 관리자 배지 */
+  .faq-admin-badge {
+    background:#1d7f1d;
+    color:#fff;
+    font-size:0.75rem;
+    font-weight:600;
+    padding:2px 6px;
+    border-radius:6px;
+  }
+</style>
+{% endblock %}
