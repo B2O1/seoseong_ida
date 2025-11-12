@@ -20,7 +20,7 @@ class MyUserManager(BaseUserManager):
 
 
 class MyUser(AbstractBaseUser, PermissionsMixin):
-    user_id = models.CharField(max_length=20, unique=True)
+    user_id = models.CharField(max_length=64, unique=True)
     username = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
