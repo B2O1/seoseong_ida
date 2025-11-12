@@ -1,0 +1,21 @@
+{% extends "reference.html" %}
+{% load static %}
+
+{% block search %}
+  {% include "partials/home_search.html" %}
+{% endblock %}
+
+{% block activate %}
+<link rel="stylesheet" href="{% static 'cafes/css/_cafe_cards.css' %}">
+<main class="home-main-container">
+  <section class="home-container">
+    <h2>추천 카페</h2>
+    <div class="home-page-scroll">
+      {% include "cafes/_cafe_cards.html" with cafes=recommend_cafes %}
+    </div>
+  </section>
+</main>
+{% endblock %}
+
+{# 슬라이드 스크립트도 제거 #}
+{% block script %}{% endblock %}

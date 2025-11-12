@@ -1,0 +1,185 @@
+{% extends "reference.html" %} {% block search %} {% include "partials/home_search.html" %} {% endblock %} {% comment %}
+이거 왜이래래 {% endcomment %} {% block choose %}
+<div>
+  <span id="categorySelector" role="button" tabindex="0">카테고리를 선택해주세요</span>
+</div>
+
+<main id="categorySuggestions" class="suggestion-box hidden" aria-hidden="true">
+  <div id="category_content">
+    <h3>오늘은 어떤 무드?</h3>
+    <div class="tags">
+      <!-- 버튼에 data-code로 실제 카테고리 값을 심어둡니다 (URL ?cat=값 으로 전달) -->
+      <button class="tag-btn" data-code="쾌좋카">쾌좋카</button>
+      <button class="tag-btn" data-code="혼좋카">혼좋카</button>
+      <button class="tag-btn" data-code="책좋카">책좋카</button>
+      <button class="tag-btn" data-code="이걸안카">이걸안카</button>
+      <button class="tag-btn" data-code="단좋카">단좋카</button>
+      <button class="tag-btn" data-code="커맛카">커맛카</button>
+      <button class="tag-btn" data-code="카공카">카공카</button>
+      <button class="tag-btn" data-code="화청카">화청카</button>
+      <button class="tag-btn" data-code="분좋카">분좋카</button>
+      <button class="tag-btn" data-code="디맛카">디맛카</button>
+      <button class="tag-btn" data-code="가좋카">가좋카</button>
+      <button class="tag-btn" data-code="반동카">반동카</button>
+      <button class="tag-btn" data-code="밤샘카페">밤샘카페</button>
+      <button class="tag-btn" data-code="한옥">한옥</button>
+
+      <button id="applyFilters" type="button">적용하기</button>
+    </div>
+  </div>
+</main>
+{% endblock %} {% block title %} {% endblock %} {% block content %}
+<div class="search-page-banner">
+  <h3 class="search-page-header">
+    추천 카페 리스트 {% if page_obj %}<small>({{ page_obj.paginator.count }}곳)</small> {% elif cafes %}<small
+      >({{ cafes|length }}곳)</small
+    >{% endif %}
+  </h3>
+
+  <div class="search-page-wrapper">
+    <ul class="banner-list">
+      {% for cafe in cafes %}
+      <li onclick="openNaverMapPopup('{{ cafe.name|escapejs }}','{{ cafe.address|escapejs }}')" style="cursor: pointer">
+        <div class="banner-list-content">
+          {% comment %}
+          <img
+            src="{{ cafe.main_photo_url|default:static('img/placeholder_cafe.jpg') }}"
+            alt="{{ cafe.name }}"
+            loading="lazy"
+          />
+          {% endcomment %}
+          <h3>{{ cafe.name }}</h3>
+          {% comment %} 얘도 없는 애들이 있어서 어떻게 해야하나.. {% endcomment %} {% comment %}
+          <p>{{ cafe.time|default:"카페 설명이 준비 중입니다." }}</p>
+          {% endcomment %} {% if cafe.address %}
+          <p class="addr">{{ cafe.address }}</p>
+          {% endif %} {% comment %} 별점 없는 카페들도 있어서... {% endcomment %} {% comment %} {% if cafe.rating %}
+          <p class="rating">⭐ {{ cafe.rating|floatformat:2 }}</p>
+          {% endif %} {% endcomment %} {% if cafe.cats_display %}
+          <p style="font-weight: bold" class="category">{{ cafe.cats_display }}</p>
+          {% endif %}
+        </div>
+      </li>
+      {% empty %}
+      <li>조건에 맞는 카페가 없어요.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  {% if page_obj %}
+  <nav
+    class="pagination"
+    aria-label="페이지네이션"
+    style="display: flex; gap: 0.75rem; align-items: center; justify-content: center; margin-top: 1.5rem"
+  >
+    {% if page_obj.has_previous %}
+    <a class="px-3 py-1 border rounded" href="?page={{ page_obj.previous_page_number }}{{ qs_keep }}">이전</a>
+    {% else %}
+    <span class="px-3 py-1 border rounded opacity-50 cursor-not-allowed">이전</span>
+    {% endif %}
+
+    <span class="text-sm">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+    <a class="px-3 py-1 border rounded" href="?page={{ page_obj.next_page_number }}{{ qs_keep }}">다음</a>
+    {% else %}
+    <span class="px-3 py-1 border rounded opacity-50 cursor-not-allowed">다음</span>
+    {% endif %}
+  </nav>
+  {% endif %}
+</div>
+{% endblock %} {% block script %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const popup = document.getElementById('categorySuggestions');
+    const categorySelector = document.getElementById('categorySelector');
+    const applyBtn = document.getElementById('applyFilters');
+
+    function showSuggestions() {
+      if (!popup) return;
+      popup.classList.remove('hidden');
+      popup.style.display = 'block';
+      popup.setAttribute('aria-hidden', 'false');
+    }
+    function hideSuggestions() {
+      if (!popup) return;
+      popup.classList.add('hidden');
+      popup.style.display = 'none';
+      popup.setAttribute('aria-hidden', 'true');
+    }
+
+    if (categorySelector) {
+      ['click', 'keydown'].forEach((evt) => {
+        categorySelector.addEventListener(evt, function (e) {
+          if (evt === 'keydown' && !['Enter', ' '].includes(e.key)) return;
+          e.stopPropagation();
+          showSuggestions();
+        });
+      });
+    }
+
+    document.addEventListener('click', function (event) {
+      if (popup && !popup.contains(event.target) && event.target !== categorySelector) {
+        hideSuggestions();
+      }
+    });
+
+    if (popup) {
+      popup.addEventListener('click', function (event) {
+        event.stopPropagation(); // 팝업 내부 클릭 시 숨김 방지
+      });
+    }
+
+    // 버튼 클릭 시 selected 토글 (이벤트 위임)
+    const content = document.getElementById('category_content');
+    if (content) {
+      content.addEventListener('click', function (event) {
+        const b = event.target.closest('.tag-btn');
+        if (b) b.classList.toggle('selected');
+      });
+    }
+
+    // 현재 URL의 cat 파라미터를 읽어 초기 선택 상태 반영
+    const params = new URLSearchParams(window.location.search);
+    const cats = params.getAll('cat');
+    if (cats.length) {
+      document.querySelectorAll('.tag-btn').forEach((btn) => {
+        if (cats.includes(btn.dataset.code)) btn.classList.add('selected');
+      });
+    }
+
+    // 적용하기 → ?cat=... 파라미터로 갱신
+    if (applyBtn) {
+      applyBtn.addEventListener('click', function () {
+        const selected = Array.from(document.querySelectorAll('.tag-btn.selected')).map((b) => b.dataset.code);
+        const p = new URLSearchParams(window.location.search);
+        p.delete('cat'); // 기존 cat 제거
+        selected.forEach((c) => p.append('cat', c)); // 다중 추가
+        p.set('page', 1); // 필터 바꾸면 1페이지로
+        window.location.search = p.toString();
+      });
+    }
+  });
+  // ✅ 네이버 지도 ‘웹사이트’를 새 창으로 여는 함수 (검색 기반)
+  function openNaverMapPopup(name, address, lat = null, lng = null) {
+    // 1) 좌표가 있으면 좌표 우선 (있을 때만 쓰고, 없다면 검색으로 fallback)
+    if (lat != null && lng != null) {
+      // 좌표 기반 열기 (웹): 공식 딥링크가 문서화가 약해서, 일반적으로는 검색이 더 호환성이 좋음.
+      // 좌표만으로 특정 장소가 안 잡힐 수 있어 검색로직로 fallback 추천.
+      const query = encodeURIComponent((name || '') + ' ' + (address || ''));
+      const url = `https://map.naver.com/p/search/${query}`; // 좌표 URL은 단말/버전에 따라 불안정 → 검색 권장
+      window.open(url, 'naverMapPopup');
+      return;
+    }
+
+    // 2) 주소/가게명 기반 검색 (가장 호환성 좋음)
+    if (!address && !name) {
+      alert('지도에서 검색할 정보가 없어요 😢');
+      return;
+    }
+    const query = encodeURIComponent(((name || '') + ' ' + (address || '')).trim());
+    const url = `https://map.naver.com/p/search/${query}`;
+    window.open(url, 'naverMapPopup');
+  }
+</script>
+{% endblock %}

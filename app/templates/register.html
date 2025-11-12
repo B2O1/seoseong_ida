@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+{% extends 'reference.html' %}
+{% load static %}
+
+{% block content %}
+
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+        {{ message }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+    <script>
+
+    </script>
+
+    <div class='register-body'>
+        <h1> 회원가입 </h1>
+        <br>
+        <form class='sign_up_form' action="{% url 'register' %}" method ='post'>
+            {% csrf_token %}
+            <input type='text' name='username' placeholder='이름' />
+            <input type='text' name='user_id' required placeholder='아이디' />
+            <input type='password' name='password' required placeholder='비밀번호' />
+            <input type='password' name='password2' required placeholder='비밀번호 확인' />
+            <button type='submit' value='생성'>회원가입</button>
+        </form>
+        <section class='login_section'>
+            <div class='already_signed_up'>이미 회원이신가요?</div>
+            <a href='{% url 'login' %}'>
+                <button class='login_button'>로그인하기</button>
+            </a>
+        </section>
+    </div>
+
+
+
+{% endblock %}
+
+{% block statics %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "reference.html" %}
+{% load static %}
+
+{% block choose %}
+<link rel="stylesheet" href="{% static 'cafes/css/findbymap.css' %}"/>
+
+<div class="fm-root">
+  <div id="fm-wrap">
+    <div class="fm-stage">
+      <!-- 지도 -->
+      <div id="fm-map" class="fm-map"></div>
+
+      <!-- 지도 위: 가로형 필터 바 (JS가 여기에 렌더링) -->
+      <div id="fm-filter-host" class="fm-filter-bar"></div>
+
+      <!-- 지도 위: 오른쪽 리스트 오버레이 -->
+      <aside class="fm-list-overlay">
+        <div id="fm-info-boxes" class="fm-list"></div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+{# API URL 주입은 우리 JS보다 먼저 #}
+{% url 'cafes:cafes_api' as cafes_api_url %}
+<script id="findbymap-config" type="application/json">{"apiUrl":"{{ cafes_api_url }}"}</script>
+{% endblock %}
+
+{% block script %}
+<script>
+  window.navermap_authFailure = function () {
+    console.error('NAVER MAP auth failed — check ncpKeyId & allowed URLs');
+  };
+</script>
+<script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId={{ NAVER_MAPS_CLIENT_ID }}&submodules=geocoder" defer></script>
+<script src="{% static 'cafes/js/findbymap.js' %}" defer></script>
+{% endblock %}

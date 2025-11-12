@@ -1,0 +1,159 @@
+<div class="home-search-search-container">
+  <form id="home-search-searchForm">
+    <input class="home-search-search-bar" type="text" placeholder="어떤 카페가 좋을까?" />
+    <button class="home-search-button-grid" type="submit">🔍 검색</button>
+  </form>
+
+  <main id="home-search-searchSuggestions" class="suggestion-box hidden">
+    <div id="home-search-container_who">
+      <h3>누구와 함께 하나요?</h3>
+      <div>
+        <button class="tag-btn">🧑‍🤝‍🧑 친구랑 <span>(14)</span></button>
+        <button class="tag-btn">👩‍❤️‍👨 연인이랑 <span>(14)</span></button>
+        <button class="tag-btn">👨‍👩‍👧‍👦 가족이랑 <span>(9)</span></button>
+        <button class="tag-btn">🐶 반려동물과 함께 <span>(7)</span></button>
+        <button class="tag-btn">👤 혼자서 <span>(7)</span></button>
+        <button class="tag-btn">👥 단체로 <span>(4)</span></button>
+        <button class="tag-btn">🌍 외국인 친구와 <span>(3)</span></button>
+      </div>
+    </div>
+
+    <div id="home-search-container_what">
+      <h3>무엇을 하나요?</h3>
+      <div>
+        <button class="tag-btn">🍰 디저트 먹기 <span>(14)</span></button>
+        <button class="tag-btn">☕ 커피 마시기 <span>(14)</span></button>
+        <button class="tag-btn">💻 공부하기 <span>(9)</span></button>
+        <button class="tag-btn">📖 책 읽기 <span>(7)</span></button>
+        <button class="tag-btn">💬 수다 떨기 <span>(7)</span></button>
+        <button class="tag-btn">🏡 한옥 감성 즐기기 <span>(4)</span></button>
+        <button class="tag-btn">🐾 반려동물과 함께하기 <span>(3)</span></button>
+        <button class="tag-btn">💰 가성비 좋은 곳 찾기 <span>(3)</span></button>
+        <button class="tag-btn">🔍 숨겨진 카페 찾기 <span>(3)</span></button>
+        <button class="tag-btn">🚻 화장실 청결한 곳 찾기 <span>(3)</span></button>
+      </div>
+    </div>
+
+    <div id="home-search-container_special">
+      <h3>분위기와 특징</h3>
+      <div>
+        <button class="tag-btn">✨ 분위기 좋은 <span>(4)</span></button>
+        <button class="tag-btn">🏡 한옥 감성 <span>(3)</span></button>
+        <button class="tag-btn">🍽️ 빵이 맛있는 <span>(3)</span></button>
+        <button class="tag-btn">🍰 케이크가 맛있는 <span>(3)</span></button>
+        <button class="tag-btn">☕ 커피가 맛있는 <span>(3)</span></button>
+        <button class="tag-btn">📚 공부하기 좋은 <span>(4)</span></button>
+        <button class="tag-btn">🛋️ 쾌적한 <span>(3)</span></button>
+        <button class="tag-btn">🎶 조용한 <span>(3)</span></button>
+        <button class="tag-btn">🥇 올타임 베스트 <span>(3)</span></button>
+        <button class="tag-btn">🚀 주말 피해야 하는 <span>(3)</span></button>
+        <button class="tag-btn">🕵️ 숨겨진 나만의 공간 <span>(3)</span></button>
+        <button class="tag-btn">🐾 반려동물과 함께 <span>(3)</span></button>
+        <button class="tag-btn">🥛 우유 변경 가능 <span>(3)</span></button>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+  // Django에서 URL 이름으로 실제 URL 가져오기
+  const searchBaseUrl = "{% url 'search' %}";
+  const loginUrl = "{% url 'login' %}";
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const popup = document.getElementById('home-search-searchSuggestions');
+    const searchInput = document.querySelector('.home-search-search-bar');
+    const searchForm = document.getElementById('home-search-searchForm');
+
+    let selectedValues = { who: '', what: '', special: '' };
+
+    // ✅ show/hide: 'hidden' ↔ 'show'만 토글 (현재 마크업과 CSS에 맞춤)
+    function showSuggestions() {
+      if (!popup) return;
+      popup.classList.remove('hidden');
+      popup.classList.add('show');
+    }
+    function hideSuggestions() {
+      if (!popup) return;
+      popup.classList.remove('show');
+      popup.classList.add('hidden');
+    }
+
+    if (searchInput) {
+      // focus 또는 click 중 아무거나 써도 됨
+      searchInput.addEventListener('focus', (e) => {
+        e.stopPropagation();
+        showSuggestions();
+      });
+      searchInput.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showSuggestions();
+      });
+    }
+
+    document.addEventListener('click', function (event) {
+      if (!popup) return;
+      if (!popup.contains(event.target) && event.target !== searchInput) {
+        hideSuggestions();
+      }
+    });
+
+    if (popup) {
+      popup.addEventListener('click', function (event) {
+        event.stopPropagation();
+      });
+    }
+
+    const categories = {
+      'home-search-container_who': 'who',
+      'home-search-container_what': 'what',
+      'home-search-container_special': 'special',
+    };
+
+    // ✅ 버튼 선택: .home-search-tag-btn 또는 .tag-btn 둘 다 지원
+    Object.keys(categories).forEach((categoryId) => {
+      const category = document.getElementById(categoryId);
+      if (!category) return;
+
+      category.addEventListener('click', function (event) {
+        // 버튼/이모지/숫자 span 어디를 눌러도 버튼을 찾도록
+        const btn = event.target.closest('.home-search-tag-btn, .tag-btn');
+        if (!btn || !category.contains(btn)) return;
+
+        event.stopPropagation();
+
+        // 같은 그룹 내 기존 선택 해제
+        category
+          .querySelectorAll('.home-search-tag-btn.selected, .tag-btn.selected')
+          .forEach((b) => b.classList.remove('selected'));
+
+        btn.classList.add('selected');
+        selectedValues[categories[categoryId]] = btn.innerText.trim();
+      });
+    });
+
+    if (searchForm) {
+      searchForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const searchQuery = (searchInput?.value || '').trim();
+        const queryParams = new URLSearchParams();
+
+        if (searchQuery) queryParams.append('query', searchQuery);
+        if (selectedValues.who) queryParams.append('who', selectedValues.who);
+        if (selectedValues.what) queryParams.append('what', selectedValues.what);
+        if (selectedValues.special) queryParams.append('special', selectedValues.special);
+
+        const finalURL = searchBaseUrl + '?' + queryParams.toString();
+        window.top.location.href = finalURL;
+      });
+    }
+
+    // 로그인 버튼 이동 예시 (있을 때만)
+    const loginButton = document.getElementById('loginButton');
+    if (loginButton) {
+      loginButton.addEventListener('click', function () {
+        window.location.href = loginUrl;
+      });
+    }
+  });
+</script>

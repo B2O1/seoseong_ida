@@ -1,0 +1,45 @@
+<!DOCTYPE >
+
+<html>
+  <head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/total.css' %}" />
+  </head>
+  <body id="reference-wrap">
+    <section class="reference-header">
+      <div class="reference-left-section">
+        <a href="/" class="reference-header-title">서성이다</a>
+        <a href="/" class="reference-header-sub-title">니들이 카페를 알아?</a>
+      </div>
+      <div class="reference-middle-section">
+        <a href="{% url 'cafes:findbymap' %}" class="reference-map">지도로 찾기</a>
+        <a href="{% url 'cafes:category' %}" class="reference-category">카테고리로 찾기</a>
+        <a href="/chatbot/" class="reference-keyword">chatbot</a>
+      </div>
+      <div class="reference-right-section">
+        {% if user.is_authenticated %}
+          <a href="/faq/" class="FAQ">문의</a>
+          <a href="/mypage/" class="mypage">마이페이지</a>
+          <a href="/logout/" class="logout">로그아웃</a>
+        {% else %}
+          <a href="/faq/" class="FAQ">문의</a>
+          <a href="/login/" class="login">로그인</a>
+          <a href="/register/" class="createaccount">회원가입</a>
+        {% endif %}
+      </div>
+    </section>
+    {% block search %}{% endblock %} {% block activate %}{% endblock %} {% block login %}{% endblock %} {% comment %}
+    dkjf {% endcomment %} {% block choose %} {% endblock %} {% block content %}{% endblock %} {% comment %}dfs
+    {%endcomment %} {% block script %} {% endblock %}
+    <div class="footer">
+      <div class="footer-upper-box">
+        <div class="box">김혜원</div>
+        <div class="box">박찬우</div>
+        <div class="box">변해민</div>
+      </div>
+      <a href="https://github.com/B2O1/seoseong_ida" target="_blank" class="reference-footer-link"
+        >https://github.com/B2O1/seoseong_ida</a
+      >
+    </div>
+  </body>
+</html>

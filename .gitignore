@@ -1,0 +1,14 @@
+seoseong_ida/settings.py
+db.sqlite3
+seoseong_ida/__pycache__
+app/migrations/__pycache__
+app/__pycache__
+app/views/__pycache__
+cafes/__pycache__
+cafes/migrations/__pycache__
+app/test_templates
+app/migrations/*.py
+!app/migrations/__init__.py
+.env
+.DS_Store
+firebase_key.json
