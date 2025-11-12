@@ -7,9 +7,9 @@
 
   <div class="faq-item" style="margin-top:16px;">
     <div class="faq-meta">
-      <span>{{ item.name }}</span>
+      <!-- ✅ 이름 대신 '관리자'로 고정 표시, 이메일 제거 -->
+      <span>관리자</span>
       <span>· {{ item.created_at|date:"Y.m.d H:i" }}</span>
-      <span>· {{ item.email|default:"이메일 없음" }}</span>
     </div>
     <hr style="margin:12px 0; border:0; border-top:1px solid #ddd;">
     <p class="faq-item-desc" style="white-space:pre-line;">{{ item.question }}</p>
