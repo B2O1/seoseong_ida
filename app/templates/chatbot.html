@@ -181,7 +181,7 @@
     <!-- 채팅 박스 -->
     <div class="chat-box">
       <div id="chatMessages" class="chat-messages">
-        <div class="message bot">
+        <div id = "initialHelp" class="message bot">
           안녕하세요! ☕️<br>
           예: “연희동에서 조용하고 콘센트 많은 카페 추천해줘” 처럼 물어보면<br>
           서성이다 DB에서 조건에 맞는 카페를 찾아드릴게요.
@@ -231,8 +231,15 @@
 
   chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
     const message = chatInput.value.trim();
     if (!message) return;
+
+    // 첫 질문 시 초기 안내 숨기기 //
+    if (initialHelp) {
+      initialHelp.style.display = 'none';
+    }
+  
 
     addMessage(message, 'user');
     chatInput.value = '';
