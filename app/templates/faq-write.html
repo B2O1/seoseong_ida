@@ -2,54 +2,82 @@
 {% load static %}
 
 {% block activate %}
-<div class="faq-container">
-  <h1 class="faq-title mb-4">문의 작성</h1>
+<div class="faq-write-page">
+  <div class="faq-write-card">
+    <h1 class="faq-write-title">문의사항 작성</h1>
+    <p class="faq-write-subtitle">브런 서성이아니 개선 의견을 남겨주세요!</p>
 
-  <form method="post" class="faq-form">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
+    <form method="post" class="faq-write-form">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
 
-    {# ✅ 로그인 상태: name/email 입력칸 감추고, 고정 안내만 표시 #}
-    {% if request.user.is_authenticated %}
-      <div class="faq-field">
-        <label>작성자</label>
-        <div style="padding:10px 12px;border:1px solid #ddd;border-radius:8px;background:#fafafa">
-          {{ request.session.display_name|default:request.user.username }} ({{ request.user.email }})
+      {# ✅ 로그인 상태: 작성자 아이디 고정 표시 #}
+      {% if request.user.is_authenticated %}
+        <div class="faq-write-field">
+          <label>작성자</label>
+          <div class="faq-write-author-box">
+            {{ request.session.display_name|default:request.user.username }}
+            {% if request.user.email %}
+              ({{ request.user.email }})
+            {% endif %}
+          </div>
         </div>
-      </div>
-      {# 서버에서 HiddenInput으로 바꿔뒀으므로 별도 렌더 불필요 #}
-    {% else %}
-      {# 비로그인: 기존처럼 name/email 입력받기 #}
-      <div class="faq-field">
-        {{ form.name.label_tag }}
-        {{ form.name }}
-        {{ form.name.errors }}
-      </div>
-      <div class="faq-field">
-        {{ form.email.label_tag }}
-        {{ form.email }}
-        {{ form.email.errors }}
-      </div>
-    {% endif %}
+      {% else %}
+        {# 비로그인일 때만 이름/이메일 직접 입력 #}
+        <div class="faq-write-field">
+          {{ form.name.label_tag }}
+          {{ form.name }}
+          {{ form.name.errors }}
+        </div>
+        <div class="faq-write-field">
+          {{ form.email.label_tag }}
+          {{ form.email }}
+          {{ form.email.errors }}
+        </div>
+      {% endif %}
 
-    <div class="faq-field">
-      {{ form.question.label_tag }}
-      {{ form.question }}
-      {{ form.question.errors }}
-    </div>
+      {# 문의 유형: select 박스 #}
+      <div class="faq-write-field">
+        <label for="faq-write-type">문의 유형</label>
+        <select id="faq-write-type" class="faq-write-select">
+          <option value="카페 정보 오류">카페 정보 오류</option>
+          <option value="서비스 관련">서비스 관련</option>
+          <option value="사이트 개선 제안">사이트 개선 제안</option>
+          <option value="기타">기타</option>
+        </select>
+      </div>
 
-    <div class="faq-actions">
-      <button class="faq-btn faq-primary" type="submit">등록</button>
-      <a href="{% url 'faq_list' %}" class="faq-btn">취소</a>
-    </div>
-  </form>
+      {# 문의 내용 #}
+      <div class="faq-write-field">
+        {{ form.question.label_tag }}
+        {{ form.question }}
+        {{ form.question.errors }}
+      </div>
+
+      <div class="faq-write-actions">
+        <button class="faq-write-btn faq-write-primary" type="submit">문의 보내기</button>
+        <a href="{% url 'faq_list' %}" class="faq-write-btn">취소</a>
+      </div>
+    </form>
+     <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.querySelector(".faq-write-form");
+        const textarea = form.querySelector("textarea[name='question']");
+        const select = document.getElementById("faq-write-type");
+
+        if (!form || !textarea || !select) return;
+
+        form.addEventListener("submit", () => {
+          const type = select.value;
+          const original = textarea.value || "";
+
+          // 이미 prefix 붙어 있으면 중복 방지
+          if (!original.startsWith("[문의 유형:")) {
+            textarea.value = `[문의 유형: ${type}]\n` + original;
+          }
+        });
+      });
+    </script>
+  </div>
 </div>
-{% endblock %}
-
-{% block script %}
-<style>
-  .faq-form{display:flex;flex-direction:column;gap:16px;}
-  .faq-field label{display:block;font-weight:600;margin-bottom:6px;}
-  input,textarea{width:100%;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:1rem;}
-</style>
 {% endblock %}

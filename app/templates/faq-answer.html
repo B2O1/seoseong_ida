@@ -1,46 +1,49 @@
 {% extends "reference.html" %}
 {% load static %}
-{% load tz %} 
+{% load tz %}
+
 {% block activate %}
-<div class="faq-container">
-  <h1 class="faq-title">관리자 답변</h1>
+<div class="faq-answer-page">
+  <div class="faq-answer-card">
+    <h1 class="faq-answer-title">문의 내용</h1>
 
-  <div class="faq-item" style="margin-top:16px;">
-    <div class="faq-meta">
-      <!-- ✅ 이름 대신 '관리자'로 고정 표시, 이메일 제거 -->
-      <span>관리자</span>
-      <span>· {% localtime on %}{{ item.created_at|date:"Y.m.d H:i" }}{% endlocaltime %}</span>
+    {# 문의 본문 영역 #}
+    <div class="faq-answer-question">
+      <div class="faq-answer-meta">
+        <div class="faq-answer-meta-row">
+          <span class="faq-answer-label">이름</span>
+          <span class="faq-answer-value">{{ item.name }}</span>
+        </div>
+        <div class="faq-answer-meta-row">
+          <span class="faq-answer-label">문의 일시</span>
+          <span class="faq-answer-value">
+            {% localtime on %}{{ item.created_at|date:"Y.m.d H:i" }}{% endlocaltime %}
+          </span>
+        </div>
+      </div>
+
+      <div class="faq-answer-section-title">문의 내용</div>
+      <p class="faq-answer-question-body">
+        {{ item.question }}
+      </p>
     </div>
-    <hr style="margin:12px 0; border:0; border-top:1px solid #ddd;">
-    <p class="faq-item-desc" style="white-space:pre-line;">{{ item.question }}</p>
+
+    {# 관리자 답변 폼 #}
+    <form method="post" class="faq-answer-form">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div class="faq-answer-field">
+        <label class="faq-answer-section-title">관리자 답변</label>
+        {{ form.answer }}
+        {{ form.answer.errors }}
+      </div>
+
+      <div class="faq-answer-actions">
+        <a href="{% url 'faq_detail' item.pk %}" class="faq-answer-btn">취소</a>
+        <button type="submit" class="faq-answer-btn faq-answer-primary">작성 완료</button>
+      </div>
+    </form>
   </div>
-
-  <form method="post" class="faq-form" style="margin-top:16px;">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    <div class="faq-field">
-      {{ form.answer.label_tag }}
-      {{ form.answer }}
-      {{ form.answer.errors }}
-    </div>
-    <div class="faq-actions" style="display:flex; gap:8px;">
-      <button type="submit" class="faq-btn faq-primary">저장</button>
-      <a href="{% url 'faq_detail' item.pk %}" class="faq-btn">취소</a>
-    </div>
-  </form>
 </div>
-{% endblock %}
-
-{% block script %}
-<style>
-  .faq-item { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:20px; }
-  .faq-meta { font-size:0.9rem; color:#666; display:flex; gap:8px; flex-wrap:wrap; }
-  .faq-form { display:flex; flex-direction:column; gap:16px; }
-  .faq-field label { display:block; font-weight:600; margin-bottom:6px; }
-  textarea { width:100%; border:1px solid #ddd; border-radius:8px; padding:10px; font-size:1rem; }
-  .faq-btn { appearance:none; border:1px solid #e5e7eb; background:#fff; color:#111; border-radius:12px; padding:10px 14px; font-weight:600; text-decoration:none; display:inline-block; }
-  .faq-btn.faq-primary { background:#111; color:#fff; border-color:#111; }
-  .faq-title { font-size:1.5rem; font-weight:700; margin:0 0 12px; }
-  .faq-container { max-width:760px; margin:0 auto; padding:24px 16px 56px; }
-</style>
 {% endblock %}

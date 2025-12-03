@@ -314,7 +314,7 @@ def _field_in(model, candidates):
 
 class CategoryView(TemplateView):
     template_name = "cafes/category.html"
-    PAGE_SIZE_DEFAULT = 12
+    PAGE_SIZE_DEFAULT = 16
     PAGE_SIZE_MAX = 60
 
     # 버튼 라벨 → 실제 컬럼

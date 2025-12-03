@@ -1,4 +1,9 @@
 {% load static %}
+<div class="cc_recommend_header">
+  <span class="cc_rec_bar"></span>
+  <h2 class="cc_rec_title">오늘의 추천 카페</h2>
+</div>
+
 <div class="cc_slider">
   <div class="cc_track" id="cafeSlider">
     {% for cafe in cafes %}
@@ -9,7 +14,6 @@
            href="https://map.naver.com/v5/search/{{ q|urlencode }}"
            target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"
            style="text-decoration:none; color:inherit; display:block;">
-           
           <img class="cc_card_img"
                src="{% static 'css/image/SEOSEONG-IDA.png' %}"
                alt="{{ name }}"
