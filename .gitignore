@@ -5,6 +5,7 @@ app/migrations/__pycache__
 app/migrations
 app/__pycache__
 app/views/__pycache__
+app/views_pkg/__pycache__
 cafes/__pycache__
 cafes/migrations/__pycache__
 app/test_templates
