@@ -148,8 +148,8 @@
     const filterWrap = document.createElement('div');
     filterWrap.innerHTML = `
       <div class="fm-filter-actions" style="display:inline-flex;gap:6px;margin-right:8px;white-space:nowrap;">
-        <button type="button" id="fm-filter-all">전체</button>
-        <button type="button" id="fm-filter-none">해제</button>
+        <button type="button" id="fm-filter-all" class="fm-filter-pill fm-filter-pill--primary">전체</button>
+        <button type="button" id="fm-filter-none" class="fm-filter-pill">해제</button>
       </div>
       <div class="fm-filter-row" style="display:flex;flex-wrap:nowrap;gap:6px;align-items:center;white-space:nowrap;overflow-x:auto;overflow-y:hidden;">
         ${CATEGORIES.map(c => `
@@ -509,25 +509,46 @@
     // 필터 변경
     const btnAll  = document.getElementById('fm-filter-all');
     const btnNone = document.getElementById('fm-filter-none');
+    const catChecks = Array.from(document.querySelectorAll('.fm-cat-check'));
 
-    document.querySelectorAll('.fm-cat-check').forEach(chk => {
+    /** 전체 버튼 색깔 갱신 */
+    function updateAllButtonUI() {
+      if (!btnAll) return;
+      const allOn = catChecks.length > 0 && catChecks.every(chk => chk.checked);
+      if (allOn) {
+        btnAll.classList.add('is-active');   // 노랭이 ON
+      } else {
+        btnAll.classList.remove('is-active'); // 흰색으로
+      }
+    }
+
+    // 체크박스 개별 변경 시
+    catChecks.forEach(chk => {
       chk.addEventListener('change', () => {
         applyFilterToMap();
         refreshForCategoryGlobal();
+        updateAllButtonUI();
       });
     });
 
+    // 전체
     btnAll?.addEventListener('click', () => {
-      document.querySelectorAll('.fm-cat-check').forEach(chk => chk.checked = true);
+      catChecks.forEach(chk => chk.checked = true);
       applyFilterToMap();
       refreshForCategoryGlobal();
+      updateAllButtonUI();
     });
 
+    // 해제
     btnNone?.addEventListener('click', () => {
-      document.querySelectorAll('.fm-cat-check').forEach(chk => chk.checked = false);
+      catChecks.forEach(chk => chk.checked = false);
       applyFilterToMap();
       listNextToken = null;
+      updateAllButtonUI();
     });
+
+// 초기 상태도 한 번 맞춰주기
+updateAllButtonUI();
 
     // 지도 이동 시: 뷰포트 로드
     naver.maps.Event.addListener(map, 'idle', () => {

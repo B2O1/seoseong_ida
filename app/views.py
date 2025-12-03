@@ -20,6 +20,7 @@ from django.db.models.expressions import Func, Value
 from cafes.models import DfCafeFull, CafePhotoCache
 from .models import FaqPost, FaqComment
 from django import forms
+from django.core.paginator import Paginator
 
 
 class FaqAnswerForm(forms.ModelForm):
@@ -81,9 +82,54 @@ class FaqForm(forms.ModelForm):
         model = FaqPost
         fields = ['name', 'email', 'question']
 
+
 def faq_list(request):
-    items = FaqPost.objects.order_by("-created_at")
-    return render(request, "faq.html", {"items": items})
+    items = FaqPost.objects.all().order_by('-created_at')
+
+    processed = []
+
+    for obj in items:
+        q = obj.question or ""
+        q_type = "기타"      # 기본값
+        body = q
+
+        # ============================
+        # 🔍 [문의 유형: XXX] 형식 파싱
+        # ============================
+        if q.startswith("[문의 유형:"):
+            end = q.find("]")
+            if end != -1:
+                header = q[: end + 1]  # "[문의 유형: XXX]"
+                # "XXX" 부분만 추출
+                q_type = header.replace("[문의 유형:", "").replace("]", "").strip()
+                # 본문(body)에서 유형 부분 제거
+                body = q[end + 1:].lstrip("\n")
+
+        # ============================
+        # 🔍 제목 = 본문 첫 줄
+        # ============================
+        lines = body.splitlines()
+        title = lines[0] if lines else ""
+
+        # ============================
+        # 🔍 템플릿에서 사용할 임시 필드
+        # ============================
+        obj.display_type = q_type
+        obj.display_title = title
+        obj.display_body = body
+
+        processed.append(obj)
+
+    # ============================
+    # 🔍 페이지네이션 (기존 코드 그대로)
+    # ============================
+    paginator = Paginator(processed, 3)  # 페이지당 3개 (네 코드 그대로)
+    page = request.GET.get('page')
+    items_page = paginator.get_page(page)
+
+    return render(request, 'faq.html', {
+        'items': items_page
+    })
 
 def _display_name_from_session_or_user(request):
     # 세션에 우리가 넣어둔 표시명(없는 경우 username)

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat UI</title>
+
+<style>
+/* ===================== */
+/* 메인 변수 */
+/* ===================== */
+:root {
+    --peach: #F8C9B8;        /* 기본 살구 */
+    --peach-deep: #F7A98C;   /* 진한 코랄 */
+    --peach-light: #FDE7DF;  /* 아주 연한 살구 */
+    --border-light: #f3d6cd;
+}
+
+/* ===================== */
+/* 챗봇 전체 컨테이너 */
+/* ===================== */
+.chatbot-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+}
+
+/* ===================== */
+/* 둥근 버튼 */
+/* ===================== */
+.chatbot-toggle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--peach);
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    transition: all .2s;
+}
+.chatbot-toggle:hover {
+    background: var(--peach-deep);
+}
+
+/* ===================== */
+/* 챗봇 박스 */
+/* ===================== */
+.chatbot-box {
+    width: 320px;
+    height: 420px;
+    background: white;
+    display: none;            /* 기본 접힘 */
+    flex-direction: column;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    overflow: hidden;
+}
+
+/* ===================== */
+/* 헤더 */
+/* ===================== */
+.chatbot-header {
+    background: var(--peach-deep);
+    padding: 16px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* ===================== */
+/* 메시지 영역 */
+/* ===================== */
+.chatbot-messages {
+    flex: 1;
+    padding: 14px;
+    overflow-y: auto;
+    background: var(--peach-light);
+}
+
+/* 메시지 공통 */
+.message {
+    max-width: 75%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    font-size: 14px;
+}
+
+/* 사용자 메시지 */
+.message.user {
+    background: var(--peach);
+    margin-left: auto;
+}
+
+/* 봇 메시지 */
+.message.bot {
+    background: white;
+    border: 1px solid var(--border-light);
+}
+
+/* ===================== */
+/* 입력창 */
+/* ===================== */
+.chatbot-input {
+    display: flex;
+    padding: 10px;
+    background: white;
+    border-top: 1px solid var(--border-light);
+}
+
+.chatbot-input input {
+    flex: 1;
+    border: none;
+    padding: 8px;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+}
+
+.send-btn {
+    padding: 8px 14px;
+    background: var(--peach);
+    border: none;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.send-btn:hover {
+    background: var(--peach-deep);
+}
+
+</style>
+
+</head>
+<body>
+  <div class="chatbot-container">
+
+      <!-- 접기/펴기 버튼 -->
+      <button class="chatbot-toggle">💬</button>
+
+      <!-- 챗봇 박스 -->
+      <div class="chatbot-box">
+
+          <div class="chatbot-header">
+              <span>상담 도우미</span>
+          </div>
+
+          <div class="chatbot-messages" id="messages">
+              <!-- 메시지 들어올 자리 -->
+          </div>
+
+          <div class="chatbot-input">
+              <input type="text" placeholder="메시지를 입력하세요…" />
+              <button class="send-btn">전송</button>
+          </div>
+      </div>
+  </div>
+</body>
+</html>

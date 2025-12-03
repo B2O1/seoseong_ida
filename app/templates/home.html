@@ -2,20 +2,22 @@
 {% load static %}
 
 {% block search %}
-  {% include "partials/home_search.html" %}
+<div class="home-intro">
+  <p class="home-intro-main">
+    오늘 어디 갈지 정해드립니다
+  </p>
+  <p class="home-intro-sub">
+    복잡한 선택 대신, 서성이다가 자연스럽게 당신만의 카페를 찾아드립니다
+  </p>
+</div>
 {% endblock %}
-
 {% block activate %}
 <link rel="stylesheet" href="{% static 'cafes/css/_cafe_cards.css' %}">
-<main class="home-main-container">
+<div class="home-main-container">
   <section class="home-container">
-    <h2>추천 카페</h2>
     <div class="home-page-scroll">
       {% include "cafes/_cafe_cards.html" with cafes=recommend_cafes %}
     </div>
   </section>
-</main>
+</div>
 {% endblock %}
-
-{# 슬라이드 스크립트도 제거 #}
-{% block script %}{% endblock %}
