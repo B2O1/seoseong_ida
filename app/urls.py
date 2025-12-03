@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+
+
 urlpatterns = [
     path('', views.home, name='home'),
     path('search/', views.search, name='search'),
@@ -17,4 +19,6 @@ urlpatterns = [
     path("faq/<int:pk>/", views.faq_detail, name="faq_detail"),  # ← 상세 보기
     path("faq/<int:pk>/answer/", views.faq_answer, name="faq_answer"),
     path("faq/comment/<int:cid>/delete/", views.faq_comment_delete, name="faq_comment_delete"),
+    path("chatbot/", views.chatbot_view, name="chatbot"),
+    path("chatbot/api/", views.chatbot_api, name="chatbot_api"),
 ]

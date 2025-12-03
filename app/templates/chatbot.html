@@ -1,0 +1,273 @@
+{% extends "reference.html" %}
+
+{% block search %}
+  {% include "partials/home_search.html" %}
+{% endblock %}
+
+{% block choose %}
+<style>
+  .chat-page {
+    background: #f7f3eb; /* 바탕 배경색 (스크린샷 느낌) */
+    padding: 40px 0 80px;
+  }
+
+  .chat-card {
+    max-width: 720px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+    padding: 40px 48px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    border: 1px solid
+  }
+
+  .chat-greeting {
+    text-align: center;
+  }
+
+  .chat-greeting-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .chat-greeting-sub {
+    font-size: 14px;
+    color: #999;
+  }
+
+  .chat-quick-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .chat-quick-btn {
+    border-radius: 999px;
+    border: 1px solid #e0d8cc;
+    padding: 8px 16px;
+    background: #f9f5ef;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.07s ease, box-shadow 0.12s ease;
+  }
+
+  .chat-quick-btn:hover {
+    background: #f1e7d7;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+  }
+
+  .chat-box {
+    border-radius: 18px;
+    background: #f5f5f7;
+    border: 1px solid #e6e4de;
+    padding: 16px 18px 12px;
+    display: flex;
+    flex-direction: column;
+    height: 260px;  /* 스크린샷 같은 직사각형 높이 */
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    
+  }
+
+  .message {
+    margin-bottom: 10px;
+    max-width: 80%;
+    padding: 9px 13px;
+    border-radius: 14px;
+    line-height: 1.4;
+    white-space: pre-line;
+    font-size: 14px;
+  }
+
+  .message.user {
+    margin-left: auto;
+    background: #222222;
+    color: #ffffff;
+    border-bottom-right-radius: 4px;
+  }
+
+  .message.bot {
+    margin-right: auto;
+    background: #ffffff;
+    border: 1px solid #e1e1e6;
+    border-bottom-left-radius: 4px;
+  }
+
+  .chat-input-row {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .chat-input-row input[type='text'] {
+    flex: 1;
+    border-radius: 999px;
+    border: 1px solid #d4d4dd;
+    padding: 8px 14px;
+    outline: none;
+    font-size: 14px;
+  }
+
+  .chat-input-row input[type='text']:focus {
+    border-color: #FFD369;
+    box-shadow: 0 0 0 2px rgba(255, 179, 107, 0.25);
+  }
+
+  .chat-input-row button {
+    border: none;
+    border-radius: 999px;
+    padding: 8px 18px;
+    background: #FFD369;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .chat-input-row button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .loading {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .chat-card {
+      margin: 0 16px;
+      padding: 28px 20px 24px;
+    }
+    .chat-box {
+      height: 220px;
+    }
+  }
+</style>
+
+<div class="chat-page">
+  <div class="chat-card">
+    <!-- 인사 영역 -->
+    <div class="chat-greeting">
+      <div class="chat-greeting-title">안녕하세요 OO님 😊</div>
+      <div class="chat-greeting-sub">오늘은 어떤 카페를 서성이며 찾고 싶으신가요?</div>
+    </div>
+
+    <!-- 빠른 선택 버튼 -->
+    {% comment %} <div class="chat-quick-row" id="quickButtons">
+      <button class="chat-quick-btn" data-text="크리스마스와 잘 어울리는 카페 추천해줘">
+        크리스마스와 잘 어울리는 카페 찾기
+      </button>
+      <button class="chat-quick-btn" data-text="혼자 책 읽거나 작업하기 좋은 카페 추천해줘">
+        혼카페
+      </button>
+      <button class="chat-quick-btn" data-text="가성비가 좋은 카페 추천해줘">
+        가성비가 좋은 카페 찾기
+      </button>
+    </div> {% endcomment %}
+
+    <!-- 채팅 박스 -->
+    <div class="chat-box">
+      <div id="chatMessages" class="chat-messages">
+        <div class="message bot">
+          안녕하세요! ☕️<br>
+          예: “연희동에서 조용하고 콘센트 많은 카페 추천해줘” 처럼 물어보면<br>
+          서성이다 DB에서 조건에 맞는 카페를 찾아드릴게요.
+        </div>
+      </div>
+
+      <form id="chatForm" class="chat-input-row">
+        <input
+          type="text"
+          id="chatInput"
+          placeholder="어디서 누구랑, 어떤 분위기의 카페를 찾고 있나요?"
+          autocomplete="off"
+        />
+        <button type="submit">전송</button>
+      </form>
+      <div id="chatLoading" class="loading" style="display:none;">추천 카페를 찾고 있어요...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const chatForm = document.getElementById('chatForm');
+  const chatInput = document.getElementById('chatInput');
+  const chatMessages = document.getElementById('chatMessages');
+  const loadingText = document.getElementById('chatLoading');
+  const quickButtons = document.getElementById('quickButtons');
+  const apiUrl = "{% url 'chatbot_api' %}";
+
+  function addMessage(text, sender) {
+    const div = document.createElement('div');
+    div.className = 'message ' + sender;
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // 빠른 선택 버튼 클릭 시
+  if (quickButtons) {
+    quickButtons.addEventListener('click', (e) => {
+      const btn = e.target.closest('.chat-quick-btn');
+      if (!btn) return;
+      const text = btn.dataset.text || btn.textContent;
+      chatInput.value = text;
+      chatForm.dispatchEvent(new Event('submit'));
+    });
+  }
+
+  chatForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    addMessage(message, 'user');
+    chatInput.value = '';
+
+    loadingText.style.display = 'block';
+    const submitBtn = chatForm.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      const data = await res.json();
+      loadingText.style.display = 'none';
+      submitBtn.disabled = false;
+
+      if (!res.ok || data.error) {
+        addMessage(data.error || '오류가 발생했어요.', 'bot');
+        return;
+      }
+
+      addMessage(data.answer, 'bot');
+      // 디버깅용
+      // addMessage("[DEBUG SQL]\\n" + data.sql, "bot");
+    } catch (err) {
+      loadingText.style.display = 'none';
+      submitBtn.disabled = false;
+      addMessage('서버와 통신 중 오류가 발생했어요.', 'bot');
+      console.error(err);
+    }
+  });
+</script>
+{% endblock %}
