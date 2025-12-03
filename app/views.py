@@ -21,6 +21,7 @@ from cafes.models import DfCafeFull, CafePhotoCache
 from .models import FaqPost, FaqComment
 from django import forms
 
+
 class FaqAnswerForm(forms.ModelForm):
     class Meta:
         model = FaqPost
@@ -421,3 +422,47 @@ def firebase_logout(request):
         return JsonResponse({"error": "POST only"}, status=405)
     logout(request)  # Django 세션 종료
     return JsonResponse({"ok": True})
+
+
+# cafes/views.py
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+from .agent import run_cafe_agent   # 아까 만든 함수
+
+
+def chatbot_view(request):
+    """챗봇 페이지 렌더링"""
+    return render(request, "chatbot.html")
+
+
+@csrf_exempt  # 개발용: 편하게 먼저 이렇게, 나중에 CSRF 처리 정교하게 해도 됨
+def chatbot_api(request):
+    """AJAX로 질문을 받아서 에이전트 실행 후 JSON 응답"""
+    if request.method != "POST":
+        return JsonResponse({"error": "POST only"}, status=405)
+
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except Exception:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    user_message = data.get("message", "").strip()
+    if not user_message:
+        return JsonResponse({"error": "message is required"}, status=400)
+
+    result = run_cafe_agent(user_message)
+
+    return JsonResponse(
+        {
+            "answer": result["answer"],
+            "sql": result["sql"],
+            "error": result["error"],
+            # 필요하면 raw_results도 내려줄 수 있음
+            # "raw_results": result["raw_results"],
+        }
+    )
+

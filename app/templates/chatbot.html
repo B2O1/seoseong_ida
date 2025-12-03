@@ -1,0 +1,176 @@
+{% extends "reference.html" %} {% block search %} {% include "partials/home_search.html" %} {% endblock %} {% comment %}
+이거 왜이래래 {% endcomment %} {% block choose %}
+<style>
+  /* 아주 간단한 채팅 스타일 */
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: #f5f5f7;
+  }
+  .chat-container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+    overflow: hidden;
+  }
+  .chat-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .chat-header-title {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .chat-messages {
+    flex: 1;
+    padding: 16px 20px;
+    overflow-y: auto;
+    background: #fafafa;
+  }
+  .message {
+    margin-bottom: 12px;
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    line-height: 1.4;
+    white-space: pre-line;
+  }
+  .message.user {
+    margin-left: auto;
+    background: #007aff;
+    color: white;
+    border-bottom-right-radius: 0;
+  }
+  .message.bot {
+    margin-right: auto;
+    background: white;
+    border: 1px solid #eee;
+    border-bottom-left-radius: 0;
+  }
+  .chat-input {
+    padding: 12px 16px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 8px;
+  }
+  .chat-input input[type='text'] {
+    flex: 1;
+    border-radius: 999px;
+    border: 1px solid #ddd;
+    padding: 10px 16px;
+    outline: none;
+  }
+  .chat-input button {
+    border: none;
+    border-radius: 999px;
+    padding: 10px 18px;
+    background: #007aff;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .chat-input button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+  .loading {
+    font-size: 13px;
+    color: #888;
+    margin-top: 4px;
+  }
+</style>
+
+<div class="chat-container">
+  <div class="chat-header">
+    <div class="chat-header-title">카페 추천 챗봇</div>
+    <div style="font-size: 12px; color: #999">연희동 카공카, 분좋카 다 물어봐 ✨</div>
+  </div>
+  <div id="chatMessages" class="chat-messages">
+    <div class="message bot">
+      안녕하세요! 😊<br />
+      예: "연희동에서 조용하고 콘센트 있는 카페 추천해줘" 같이 물어보면<br />
+      서성이다 DB에서 바로 찾아서 알려드릴게요.
+    </div>
+  </div>
+  <form id="chatForm" class="chat-input">
+    <input
+      type="text"
+      id="chatInput"
+      placeholder="어디서 누구랑, 어떤 분위기의 카페를 찾고 있나요?"
+      autocomplete="off"
+    />
+    <button type="submit">전송</button>
+  </form>
+</div>
+
+<script>
+  const chatForm = document.getElementById('chatForm');
+  const chatInput = document.getElementById('chatInput');
+  const chatMessages = document.getElementById('chatMessages');
+  const apiUrl = "{% url 'chatbot_api' %}";
+
+  function addMessage(text, sender) {
+    const div = document.createElement('div');
+    div.className = 'message ' + sender;
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  chatForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    // 유저 메시지 출력
+    addMessage(message, 'user');
+    chatInput.value = '';
+
+    // 로딩 메시지
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'loading';
+    loadingDiv.textContent = '추천 카페를 찾고 있어요...';
+    chatMessages.appendChild(loadingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // 버튼 비활성화
+    const submitBtn = chatForm.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      const data = await res.json();
+      loadingDiv.remove();
+      submitBtn.disabled = false;
+
+      if (!res.ok || data.error) {
+        addMessage(data.error || '오류가 발생했어요.', 'bot');
+        return;
+      }
+
+      addMessage(data.answer, 'bot');
+      // 디버깅용으로 SQL 보고 싶으면:
+      // addMessage("[DEBUG SQL]\\n" + data.sql, "bot");
+    } catch (err) {
+      loadingDiv.remove();
+      submitBtn.disabled = false;
+      addMessage('서버와 통신 중 오류가 발생했어요.', 'bot');
+      console.error(err);
+    }
+  });
+</script>
+{% endblock %}

@@ -10,5 +10,6 @@ app/test_templates
 app/migrations/*.py
 !app/migrations/__init__.py
 .env
+chatbot.ipynb
 .DS_Store
 firebase_key.json

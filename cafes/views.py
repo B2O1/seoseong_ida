@@ -328,7 +328,7 @@ class CategoryView(TemplateView):
         "카공카": "study_cafe",
         "화청카": "bright_cafe",
         "분좋카": "mood_cafe",
-        "디맛카": "desset_taste_cafe",  # DB 컬럼명 주의
+        "디맛카": "dessert_taste_cafe",  # DB 컬럼명 주의
         "가좋카": "cheap_cafe",
         "반동카": "animal_cafe",
         "밤샘카페": "night_cafe",
