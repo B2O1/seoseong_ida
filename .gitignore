@@ -16,3 +16,4 @@ firebase_key.json
 app/agent.py
 app/migrations
 app/views_pkg/__pycache__
+cafes/migrations
