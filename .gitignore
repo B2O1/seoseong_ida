@@ -16,3 +16,4 @@ chatbot.ipynb
 .DS_Store
 firebase_key.json
 app/agent.py
+cafes/migrations
