@@ -377,20 +377,22 @@ def firebase_login(request):
                 print(f"ℹ️ email이 없어 임시 이메일 사용: {email}")
 
             # 5-1) 이메일로 기존 유저 우선 탐색
-            user = User.objects.filter(email__iexact=email).first()
+            user = User.objects.filter(email__iexact=email).first() if email else None
+            if not user and uid:
+                user = User.objects.filter(user_id=uid).first()
 
             if not user:
-                # 5-2) 없으면 새로 생성 — 기존 구조 최대한 유지하되 username은 깔끔하게
-                #     (원래는 uid를 username으로 썼지만, 이메일 local-part를 우선 사용)
-                local_part = email.split("@")[0]
-                # 너무 과하게 정규화/슬러그화하지 않고 최소 변경만: 길이 제한 정도
-                username = (local_part or uid)[:24]
+                local_part = (email.split("@", 1)[0] if email else uid) or uid
+                username = local_part[:24]
 
                 user = User.objects.create_user(
+                    user_id=uid,       # ← 길이 늘리면 그대로 저장 가능
                     username=username,
-                    email=email,
-                    password=None  # 비밀번호 로그인은 사용하지 않음 (Firebase 세션 사용)
+                    password=None,
                 )
+                if email:
+                    user.email = email
+                    user.save(update_fields=["email"])
                 print(f"🆕 새 사용자 생성: username={user.username}, email={user.email}")
             else:
                 print(f"🔁 기존 사용자 로그인: username={user.username}, email={user.email}")
