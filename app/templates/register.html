@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-
-{% extends 'reference.html' %}
-{% load static %}
-
-{% block content %}
-
+<!DOCTYPE >
+<html>
+  <head>
+    {% load static %}
+    {% load tz %}
+    <link rel="stylesheet" href="{% static 'css/total.css' %}" />
+  </head>
+<body>
+<div class="login-seo">
+<a href="/">
+  서성이다
+</a>
+</div>
 {% if messages %}
   <ul class="messages">
     {% for message in messages %}
@@ -14,11 +20,7 @@
     {% endfor %}
   </ul>
 {% endif %}
-
-    <script>
-
-    </script>
-
+  <div class="login-page">
     <div class='register-body'>
         <h1> 회원가입 </h1>
         <br>
@@ -37,10 +39,6 @@
             </a>
         </section>
     </div>
-
-
-
-{% endblock %}
-
-{% block statics %}
-{% endblock %}
+  </div>
+</body>
+</html>

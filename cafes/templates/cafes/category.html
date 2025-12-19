@@ -1,62 +1,166 @@
-{% extends "reference.html" %} {% block search %} {% include "partials/home_search.html" %} {% endblock %} {% comment %}
-이거 왜이래래 {% endcomment %} {% block choose %}
-<div>
-  <span id="categorySelector" role="button" tabindex="0">카테고리를 선택해주세요</span>
-</div>
+{% extends "reference.html" %}
 
-<main id="categorySuggestions" class="suggestion-box hidden" aria-hidden="true">
-  <div id="category_content">
-    <h3>오늘은 어떤 무드?</h3>
-    <div class="tags">
-      <!-- 버튼에 data-code로 실제 카테고리 값을 심어둡니다 (URL ?cat=값 으로 전달) -->
-      <button class="tag-btn" data-code="쾌좋카">쾌좋카</button>
-      <button class="tag-btn" data-code="혼좋카">혼좋카</button>
-      <button class="tag-btn" data-code="책좋카">책좋카</button>
-      <button class="tag-btn" data-code="이걸안카">이걸안카</button>
-      <button class="tag-btn" data-code="단좋카">단좋카</button>
-      <button class="tag-btn" data-code="커맛카">커맛카</button>
-      <button class="tag-btn" data-code="카공카">카공카</button>
-      <button class="tag-btn" data-code="화청카">화청카</button>
-      <button class="tag-btn" data-code="분좋카">분좋카</button>
-      <button class="tag-btn" data-code="디맛카">디맛카</button>
-      <button class="tag-btn" data-code="가좋카">가좋카</button>
-      <button class="tag-btn" data-code="반동카">반동카</button>
-      <button class="tag-btn" data-code="밤샘카페">밤샘카페</button>
-      <button class="tag-btn" data-code="한옥">한옥</button>
+{% block choose %}
+<div class="category-bar-wrapper">
+  <div class="category-card">
+    <ul class="category-bar">
+      <button class="cat-btn" data-code="쾌좋카">쾌좋카</button>
+      <button class="cat-btn" data-code="혼좋카">혼좋카</button>
+      <button class="cat-btn" data-code="책좋카">책좋카</button>
+      <button class="cat-btn" data-code="이걸안카">이걸안카</button>
+      <button class="cat-btn" data-code="단좋카">단좋카</button>
+      <button class="cat-btn" data-code="커맛카">커맛카</button>
+      <button class="cat-btn" data-code="카공카">카공카</button>
+      <button class="cat-btn" data-code="화청카">화청카</button>
+      <button class="cat-btn" data-code="분좋카">분좋카</button>
+      <button class="cat-btn" data-code="디맛카">디맛카</button>
+      <button class="cat-btn" data-code="가좋카">가좋카</button>
+      <button class="cat-btn" data-code="반동카">반동카</button>
+      <button class="cat-btn" data-code="밤샘카페">밤샘카페</button>
+      <button class="cat-btn" data-code="한옥">한옼카</button>
+    </ul>
 
-      <button id="applyFilters" type="button">적용하기</button>
+    <div class="category-search">
+      <button id="keywordSearchBtn" type="button" class="search-icon-btn" aria-label="검색">
+        <span class="search-icon"></span>
+      </button>
     </div>
   </div>
-</main>
-{% endblock %} {% block title %} {% endblock %} {% block content %}
+</div>
+
+<style>
+  /* 갈색 배경 띠 */
+  .category-bar-wrapper {
+    width: 100%;
+    padding: 26px 0 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  /* 버튼 + 검색창 들어가는 흰 카드 */
+  .category-card {
+    width: min(1080px, 100% - 40px);
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  /* 버튼 2줄 고정 (7개 + 7개) */
+  .category-bar {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(7, auto); /* 1줄에 7개 */
+    gap: 6px 8px;
+    margin: 0;
+    padding: 0;
+    flex: 1 1 auto;
+  }
+
+  .cat-btn {
+    padding: 8px 16px;
+    border-radius: 22px;
+    border: 1px solid #ddd;
+    background: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .cat-btn.selected {
+    background: #ffebe0;
+    border-color: #ffd369;
+    font-weight: 700;
+    color: #ffd369;
+  }
+
+  /* 오른쪽 검색창 + 돋보기 버튼 */
+  .category-search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    padding: 4px 8px 4px 12px;
+    background: #ffffff;
+    flex-shrink: 0;
+  }
+
+  .category-search input {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    width: 180px;
+  }
+
+  .search-icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #3b2b27;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  /* 돋보기 아이콘 (순수 CSS) */
+  .search-icon {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    display: inline-block;
+  }
+  .search-icon::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 999px;
+    right: -4px;
+    bottom: -1px;
+    transform: rotate(45deg);
+    transform-origin: left center;
+  }
+
+  .apply-btn {
+    padding: 8px 20px;
+    background: #ffffff;
+    border-radius: 22px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+  }
+</style>
+{% endblock %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
 <div class="search-page-banner">
-  <h3 class="search-page-header">
-    추천 카페 리스트 {% if page_obj %}<small>({{ page_obj.paginator.count }}곳)</small> {% elif cafes %}<small
-      >({{ cafes|length }}곳)</small
-    >{% endif %}
-  </h3>
 
   <div class="search-page-wrapper">
     <ul class="banner-list">
       {% for cafe in cafes %}
       <li onclick="openNaverMapPopup('{{ cafe.name|escapejs }}','{{ cafe.address|escapejs }}')" style="cursor: pointer">
         <div class="banner-list-content">
-          {% comment %}
-          <img
-            src="{{ cafe.main_photo_url|default:static('img/placeholder_cafe.jpg') }}"
-            alt="{{ cafe.name }}"
-            loading="lazy"
-          />
-          {% endcomment %}
           <h3>{{ cafe.name }}</h3>
-          {% comment %} 얘도 없는 애들이 있어서 어떻게 해야하나.. {% endcomment %} {% comment %}
-          <p>{{ cafe.time|default:"카페 설명이 준비 중입니다." }}</p>
-          {% endcomment %} {% if cafe.address %}
+          {% if cafe.address %}
           <p class="addr">{{ cafe.address }}</p>
-          {% endif %} {% comment %} 별점 없는 카페들도 있어서... {% endcomment %} {% comment %} {% if cafe.rating %}
-          <p class="rating">⭐ {{ cafe.rating|floatformat:2 }}</p>
-          {% endif %} {% endcomment %} {% if cafe.cats_display %}
-          <p style="font-weight: bold" class="category">{{ cafe.cats_display }}</p>
+          {% endif %}
+          {% if cafe.cats_display %}
+          <p class="category" style="font-weight: bold">{{ cafe.cats_display }}</p>
           {% endif %}
         </div>
       </li>
@@ -64,122 +168,158 @@
       <li>조건에 맞는 카페가 없어요.</li>
       {% endfor %}
     </ul>
+    {% if page_obj %}
+    <nav
+      class="pagination"
+      aria-label="페이지네이션"
+
+    >
+      {% if page_obj.has_previous %}
+      <a class="px-3 py-1 border rounded" href="?page={{ page_obj.previous_page_number }}{{ qs_keep }}">이전</a>
+      {% else %}
+      <span class="px-3 py-1 border rounded opacity-50 cursor-not-allowed">이전</span>
+      {% endif %}
+
+      <span class="text-sm">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+
+      {% if page_obj.has_next %}
+      <a class="px-3 py-1 border rounded" href="?page={{ page_obj.next_page_number }}{{ qs_keep }}">다음</a>
+      {% else %}
+      <span class="px-3 py-1 border rounded opacity-50 cursor-not-allowed">다음</span>
+      {% endif %}
+    </nav>
+    {% endif %}
+  </div>
   </div>
 
-  {% if page_obj %}
-  <nav
-    class="pagination"
-    aria-label="페이지네이션"
-    style="display: flex; gap: 0.75rem; align-items: center; justify-content: center; margin-top: 1.5rem"
-  >
-    {% if page_obj.has_previous %}
-    <a class="px-3 py-1 border rounded" href="?page={{ page_obj.previous_page_number }}{{ qs_keep }}">이전</a>
-    {% else %}
-    <span class="px-3 py-1 border rounded opacity-50 cursor-not-allowed">이전</span>
-    {% endif %}
 
-    <span class="text-sm">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+{% endblock %}
 
-    {% if page_obj.has_next %}
-    <a class="px-3 py-1 border rounded" href="?page={{ page_obj.next_page_number }}{{ qs_keep }}">다음</a>
-    {% else %}
-    <span class="px-3 py-1 border rounded opacity-50 cursor-not-allowed">다음</span>
-    {% endif %}
-  </nav>
-  {% endif %}
-</div>
-{% endblock %} {% block script %}
+{% block script %}
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const popup = document.getElementById('categorySuggestions');
-    const categorySelector = document.getElementById('categorySelector');
-    const applyBtn = document.getElementById('applyFilters');
+  // ✅ 카테고리별 색 매핑
+  const categoryColorMap = {
+    "쾌좋카": "#6C5CE7",
+    "혼좋카": "#0984E3",
+    "책좋카": "#00A8FF",
+    "이걸안카": "#8E44AD",
+    "단좋카": "#D35400",
+    "커맛카": "#2ECC71",
+    "카공카": "#00B894",
+    "화청카": "#F1C40F",
+    "분좋카": "#E84393",
+    "디맛카": "#E17055",
+    "가좋카": "#2D3436",
+    "반동카": "#6D214F",
+    "밤샘카페": "#34495E",
+    "한옥": "#A3CB38"
+  };
 
-    function showSuggestions() {
-      if (!popup) return;
-      popup.classList.remove('hidden');
-      popup.style.display = 'block';
-      popup.setAttribute('aria-hidden', 'false');
-    }
-    function hideSuggestions() {
-      if (!popup) return;
-      popup.classList.add('hidden');
-      popup.style.display = 'none';
-      popup.setAttribute('aria-hidden', 'true');
-    }
+  document.addEventListener("DOMContentLoaded", () => {
+    // ===== 카드에 표시되는 카테고리 텍스트 → 칩 여러 개로 변환 =====
+    document.querySelectorAll(".banner-list-content .category").forEach((el) => {
+      const raw = el.innerText.trim();
 
-    if (categorySelector) {
-      ['click', 'keydown'].forEach((evt) => {
-        categorySelector.addEventListener(evt, function (e) {
-          if (evt === 'keydown' && !['Enter', ' '].includes(e.key)) return;
-          e.stopPropagation();
-          showSuggestions();
-        });
+      if (!raw) return;
+
+      // "쾌좋카 · 화청카", "쾌좋카, 화청카", "쾌좋카 화청카" 등 여러 형태를 커버
+      let labels = raw
+        .split(/[\s·,/]+/)   // 공백, 점(·), 콤마, 슬래시 기준으로 분리
+        .map((t) => t.trim())
+        .filter((t) => t.length > 0);
+
+      // 매핑에 없는 값은 버리고, 하나도 없으면 원래 텍스트 유지
+      const valid = labels.filter((t) => categoryColorMap[t]);
+
+      if (!valid.length) return;  // 매칭되는 카테고리가 없으면 건드리지 않음
+
+      // 기존 텍스트 지우고 칩들로 채우기
+      el.innerHTML = "";
+      valid.forEach((label) => {
+        const chip = document.createElement("span");
+        chip.className = "cat-chip";
+        chip.textContent = label;
+
+        const color = categoryColorMap[label];
+        chip.style.borderColor = color;
+        chip.style.color = color;
+        // 배경을 살짝 톤다운 컬러로 하고 싶으면 아래 한 줄도 써줘 (선택)
+        // chip.style.backgroundColor = color + "20"; // #RRGGBB20 형식이지만 브라우저마다 달라서 주석 처리
+
+        el.appendChild(chip);
       });
-    }
+    });
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    const params = new URLSearchParams(window.location.search);
 
-    document.addEventListener('click', function (event) {
-      if (popup && !popup.contains(event.target) && event.target !== categorySelector) {
-        hideSuggestions();
+    // ===== 카테고리 선택 초기화 =====
+    const selectedCats = params.getAll("cat");
+    document.querySelectorAll(".cat-btn").forEach((btn) => {
+      if (selectedCats.includes(btn.dataset.code)) {
+        btn.classList.add("selected");
       }
+      btn.addEventListener("click", () => {
+        btn.classList.toggle("selected");
+      });
     });
 
-    if (popup) {
-      popup.addEventListener('click', function (event) {
-        event.stopPropagation(); // 팝업 내부 클릭 시 숨김 방지
-      });
-    }
-
-    // 버튼 클릭 시 selected 토글 (이벤트 위임)
-    const content = document.getElementById('category_content');
-    if (content) {
-      content.addEventListener('click', function (event) {
-        const b = event.target.closest('.tag-btn');
-        if (b) b.classList.toggle('selected');
-      });
-    }
-
-    // 현재 URL의 cat 파라미터를 읽어 초기 선택 상태 반영
-    const params = new URLSearchParams(window.location.search);
-    const cats = params.getAll('cat');
-    if (cats.length) {
-      document.querySelectorAll('.tag-btn').forEach((btn) => {
-        if (cats.includes(btn.dataset.code)) btn.classList.add('selected');
-      });
-    }
-
-    // 적용하기 → ?cat=... 파라미터로 갱신
+    // ===== 카테고리 적용하기 =====
+    const applyBtn = document.getElementById("applyFilters");
     if (applyBtn) {
-      applyBtn.addEventListener('click', function () {
-        const selected = Array.from(document.querySelectorAll('.tag-btn.selected')).map((b) => b.dataset.code);
+      applyBtn.addEventListener("click", function () {
+        const selected = Array.from(
+          document.querySelectorAll(".cat-btn.selected")
+        ).map((b) => b.dataset.code);
+
         const p = new URLSearchParams(window.location.search);
-        p.delete('cat'); // 기존 cat 제거
-        selected.forEach((c) => p.append('cat', c)); // 다중 추가
-        p.set('page', 1); // 필터 바꾸면 1페이지로
+        p.delete("cat");
+        selected.forEach((c) => p.append("cat", c));
+        p.set("page", 1);
         window.location.search = p.toString();
       });
     }
-  });
-  // ✅ 네이버 지도 ‘웹사이트’를 새 창으로 여는 함수 (검색 기반)
-  function openNaverMapPopup(name, address, lat = null, lng = null) {
-    // 1) 좌표가 있으면 좌표 우선 (있을 때만 쓰고, 없다면 검색으로 fallback)
-    if (lat != null && lng != null) {
-      // 좌표 기반 열기 (웹): 공식 딥링크가 문서화가 약해서, 일반적으로는 검색이 더 호환성이 좋음.
-      // 좌표만으로 특정 장소가 안 잡힐 수 있어 검색로직로 fallback 추천.
-      const query = encodeURIComponent((name || '') + ' ' + (address || ''));
-      const url = `https://map.naver.com/p/search/${query}`; // 좌표 URL은 단말/버전에 따라 불안정 → 검색 권장
-      window.open(url, 'naverMapPopup');
-      return;
-    }
 
-    // 2) 주소/가게명 기반 검색 (가장 호환성 좋음)
+    // ===== 검색창 / 돋보기 버튼 =====
+    const keywordInput = document.getElementById("keywordInput");
+    const keywordBtn = document.getElementById("keywordSearchBtn");
+
+    function doSearchApply() {
+      const p = new URLSearchParams(window.location.search);
+
+      // 🔸 1) 카테고리 선택 적용
+      p.delete("cat");
+      const selectedCats = [...document.querySelectorAll(".cat-btn.selected")].map(
+        (b) => b.dataset.code
+      );
+      selectedCats.forEach((c) => p.append("cat", c));
+
+
+      // 🔸 3) 페이지 항상 1로 이동
+      p.set("page", 1);
+
+      // 이동
+      window.location.search = p.toString();
+    }
+    keywordBtn.addEventListener("click", doSearchApply);
+
+    keywordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        doSearchApply();
+      }
+    });
+  });
+
+  // ✅ 네이버 지도 검색 팝업
+  function openNaverMapPopup(name, address, lat = null, lng = null) {
     if (!address && !name) {
-      alert('지도에서 검색할 정보가 없어요 😢');
+      alert("지도에서 검색할 정보가 없어요 😢");
       return;
     }
-    const query = encodeURIComponent(((name || '') + ' ' + (address || '')).trim());
+    const query = encodeURIComponent(((name || "") + " " + (address || "")).trim());
     const url = `https://map.naver.com/p/search/${query}`;
-    window.open(url, 'naverMapPopup');
+    window.open(url, "naverMapPopup");
   }
 </script>
 {% endblock %}

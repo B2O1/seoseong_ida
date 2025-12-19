@@ -1,6 +1,4 @@
-{% extends "reference.html" %}
-
-{% block choose %}
+{% extends "reference.html" %} {% block choose %}
 <style>
   .chat-page {
     background: #f7f3eb;
@@ -20,11 +18,25 @@
     border: 1px solid #eee;
   }
 
-  .chat-greeting { text-align: center; }
-  .chat-greeting-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-  .chat-greeting-sub { font-size: 14px; color: #999; }
+  .chat-greeting {
+    text-align: center;
+  }
+  .chat-greeting-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .chat-greeting-sub {
+    font-size: 14px;
+    color: #999;
+  }
 
-  .chat-quick-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .chat-quick-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
   .chat-quick-btn {
     padding: 10px 14px;
     border-radius: 999px;
@@ -36,7 +48,7 @@
   }
   .chat-quick-btn:hover {
     background: #f1e7d7;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
     transform: translateY(-1px);
   }
 
@@ -76,8 +88,8 @@
     background: #ffffff;
     border: 1px solid #e1e1e6;
     border-bottom-left-radius: 4px;
-    padding-top : 4px;
-    padding-bottom : 30px;
+    padding-top: 4px;
+    padding-bottom: 30px;
   }
 
   .chat-input-row {
@@ -94,27 +106,39 @@
     font-size: 14px;
   }
   .chat-input-row input[type='text']:focus {
-    border-color: #FFD369;
+    border-color: #ffd369;
     box-shadow: 0 0 0 2px rgba(255, 179, 107, 0.25);
   }
   .chat-input-row button {
     border: none;
     border-radius: 999px;
     padding: 8px 18px;
-    background: #FFD369;
+    background: #ffd369;
     color: white;
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
     white-space: nowrap;
   }
-  .chat-input-row button:disabled { opacity: 0.6; cursor: default; }
+  .chat-input-row button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
 
-  .loading { font-size: 12px; color: #888; margin-top: 4px; }
+  .loading {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+  }
 
   @media (max-width: 768px) {
-    .chat-card { margin: 0 16px; padding: 28px 20px 24px; }
-    .chat-box { height: 50vh; }
+    .chat-card {
+      margin: 0 16px;
+      padding: 28px 20px 24px;
+    }
+    .chat-box {
+      height: 50vh;
+    }
   }
 </style>
 
@@ -134,8 +158,8 @@
     <div class="chat-box">
       <div id="chatMessages" class="chat-messages">
         <div id="initialHelp" class="message bot">
-          안녕하세요! ☕️<br>
-          예: “연희동에서 조용하고 콘센트 많은 카페 추천해줘” 처럼 물어보면<br>
+          안녕하세요! ☕️<br />
+          예: “연희동에서 조용하고 콘센트 많은 카페 추천해줘” 처럼 물어보면<br />
           서성이다 DB에서 조건에 맞는 카페를 찾아드릴게요.
         </div>
       </div>
@@ -150,7 +174,7 @@
         <button type="submit" id="chatSubmitBtn">전송</button>
       </form>
 
-      <div id="chatLoading" class="loading" style="display:none;">추천 카페를 찾고 있어요.</div>
+      <div id="chatLoading" class="loading" style="display: none">추천 카페를 찾고 있어요.</div>
     </div>
   </div>
 </div>

@@ -2,8 +2,10 @@ seoseong_ida/settings.py
 db.sqlite3
 seoseong_ida/__pycache__
 app/migrations/__pycache__
+app/migrations
 app/__pycache__
 app/views/__pycache__
+app/views_pkg/__pycache__
 cafes/__pycache__
 cafes/migrations/__pycache__
 app/test_templates
@@ -14,6 +16,10 @@ chatbot.ipynb
 .DS_Store
 firebase_key.json
 app/agent.py
+<<<<<<< HEAD
 app/migrations
 app/views_pkg/__pycache__
 cafes/migrations
+=======
+cafes/migrations
+>>>>>>> ee22920b5a42d33e011de673d297fea0fd3af207
