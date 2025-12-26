@@ -16,10 +16,4 @@ chatbot.ipynb
 .DS_Store
 firebase_key.json
 app/agent.py
-<<<<<<< HEAD
-app/migrations
-app/views_pkg/__pycache__
 cafes/migrations
-=======
-cafes/migrations
->>>>>>> ee22920b5a42d33e011de673d297fea0fd3af207
