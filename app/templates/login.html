@@ -1,118 +1,106 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    {% load static %}
-    {% load tz %}
-    <link rel="stylesheet" href="{% static 'css/total.css' %}">
-  </head>
+{% extends "reference.html" %}
+{% load static %}
+{% load tz %}
+{% block body_class %}auth-page{% endblock %}
+{% block login %}
 
-  <body id="reference-wrap">
-
-    <!-- 로고 영역 -->
-    <div class="login-logo-wrapper">
-      <a href="/">
-        <img class="login-img" src="{% static 'css/image/SEOSEONG-IDA.png' %}" alt="홈으로 이동">
-      </a>
-    </div>
-
-    <!-- 메시지 -->
-    {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
+  <!-- 메시지 -->
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
       <li class="{{ message.tags }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
+    {% endfor %}
+  </ul>
+  {% endif %}
 
-    <!-- 로그인 폼 -->
-    <div class="login-page">
-      <div class="register-body">
-        <h1>로그인</h1>
-        <br>
+  <!-- 로그인 폼 -->
+  <div class="login-page">
+    <div class="register-body">
+      <h1>로그인</h1>
+      <br>
 
-        <form class="sign_up_form" action="{% url 'login' %}" method="post">
-          {% csrf_token %}
-          <input type="text" name="user_id" required placeholder="아이디">
-          <input type="password" name="password" required placeholder="비밀번호">
-          <button type="submit" class="sign_up_form_btn">로그인</button>
-        </form>
+      <form class="sign_up_form" action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="user_id" required placeholder="아이디">
+        <input type="password" name="password" required placeholder="비밀번호">
+        <button type="submit" class="sign_up_form_btn">로그인</button>
+      </form>
 
-        <button onclick="googleLogin()">Google로 로그인</button>
+      <button onclick="googleLogin()">Google로 로그인</button>
 
-        <section class="login_section">
-          <div class="already_signed_up">회원이 아니신가요?</div>
-          <a href="{% url 'register' %}">
-            <button class="login_button">회원가입</button>
-          </a>
-        </section>
-      </div>
+      <section class="login_section">
+        <div class="already_signed_up">회원이 아니신가요?</div>
+        <a href="{% url 'register' %}">
+          <button class="login_button">회원가입</button>
+        </a>
+      </section>
     </div>
+  </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
-    <!-- Firebase Login Script -->
-    <script>
-      function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
+  <!-- Firebase Login Script -->
+  <script>
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    let auth = null;
+
+    window.addEventListener("load", () => {
+      fetch("/login/firebase/")
+        .then(response => response.json())
+        .then(firebaseConfig => {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          auth = firebase.auth();
+        })
+        .catch(error => console.error("❌ Firebase 설정 불러오기 실패:", error));
+    });
+
+    async function googleLogin() {
+      if (!auth) {
+        alert("Firebase 초기화 중입니다. 잠시 후 다시 시도해주세요.");
+        return;
       }
 
-      let auth = null;
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
 
-      window.addEventListener("load", () => {
-        fetch("/login/firebase/")
-          .then(response => response.json())
-          .then(firebaseConfig => {
-            if (!firebase.apps.length) {
-              firebase.initializeApp(firebaseConfig);
-            }
-            auth = firebase.auth();
-          })
-          .catch(error => console.error("❌ Firebase 설정 불러오기 실패:", error));
-      });
+      try {
+        const result = await auth.signInWithPopup(provider);
+        const idToken = await result.user.getIdToken();
+        const csrftoken = getCookie("csrftoken");
 
-      async function googleLogin() {
-        if (!auth) {
-          alert("Firebase 초기화 중입니다. 잠시 후 다시 시도해주세요.");
-          return;
+        const res = await fetch("{% url 'firebase_login' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+          credentials: "same-origin",
+          body: JSON.stringify({ idToken }),
+        });
+
+        if (res.ok) {
+          window.location.href = "/";
+        } else {
+          console.error("서버 로그인 실패");
         }
 
-        const provider = new firebase.auth.GoogleAuthProvider();
-        provider.setCustomParameters({ prompt: "select_account" });
-
-        try {
-          const result = await auth.signInWithPopup(provider);
-          const idToken = await result.user.getIdToken();
-          const csrftoken = getCookie("csrftoken");
-
-          const res = await fetch("{% url 'firebase_login' %}", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": csrftoken,
-            },
-            credentials: "same-origin",
-            body: JSON.stringify({ idToken }),
-          });
-
-          if (res.ok) {
-            window.location.href = "/";
-          } else {
-            console.error("서버 로그인 실패");
-          }
-
-        } catch (error) {
-          if (error.code === "auth/popup-closed-by-user") {
-            console.warn("사용자가 로그인 팝업을 닫았습니다.");
-          } else {
-            console.error("Google 로그인 실패:", error);
-          }
+      } catch (error) {
+        if (error.code === "auth/popup-closed-by-user") {
+          console.warn("사용자가 로그인 팝업을 닫았습니다.");
+        } else {
+          console.error("Google 로그인 실패:", error);
         }
       }
-    </script>
+    }
+  </script>
 
-  </body>
-</html>
+{% endblock %}

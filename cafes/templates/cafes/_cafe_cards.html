@@ -15,16 +15,16 @@
            target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"
            style="text-decoration:none; color:inherit; display:block;">
           <img class="cc_card_img"
-               src="{% static 'css/image/SEOSEONG-IDA.png' %}"
-               alt="{{ name }}"
-               loading="lazy" decoding="async" fetchpriority="low"
-               {% if cafe.google_photo_url %}
-                 data-final="{{ cafe.google_photo_url }}"
-               {% else %}
-                 data-fetch="{% url 'cafe_photo_api' cafe.pk %}"
-               {% endif %}
+              src="{% static 'css/image/SEOSEONG-IDA.png' %}"
+              alt="{{ name }}"
+              loading="lazy" decoding="async" fetchpriority="low"
+              data-fallback="{% static 'css/image/SEOSEONG-IDA.png' %}"
+              {% if cafe.google_photo_url %}
+                data-final="{{ cafe.google_photo_url }}"
+              {% else %}
+                data-fetch="{% url 'cafe_photo_api' cafe.pk %}"
+              {% endif %}
           />
-
           <h3 class="cc_card_title">{{ name }}</h3>
           <p class="cc_card_address">{{ address }}</p>
           <p class="cc_card_rating">★ {{ cafe.rating|default:"-" }}</p>
@@ -49,19 +49,32 @@
   /* =========================
    * A) 이미지 비동기 교체
    * ========================= */
-  const imgs = track.querySelectorAll('img.cc_card_img');
-  imgs.forEach((img, i) => {
-    const direct = img.dataset.final;    // 캐시 있음 → 즉시
-    const endpoint = img.dataset.fetch;  // 캐시 없음 → API
-    if (direct) { img.src = direct; return; }
-    if (!endpoint) return;
-    setTimeout(() => {
-      fetch(endpoint, { cache: 'no-store' })
-        .then(r => r.ok ? r.json() : Promise.reject())
-        .then(d => { if (d && d.url) img.src = d.url; })
-        .catch(() => {});
-    }, i * 120); // 호출 분산
-  });
+  function setWithFallback(img, url) {
+    const fallback = img.dataset.fallback || img.getAttribute('src'); // 기본이미지
+    img.onerror = () => { img.src = fallback; img.onerror = null; };
+    img.src = url;
+  }
+
+  function hydrateImages(scope) {
+    const imgs = scope.querySelectorAll('img.cc_card_img');
+    imgs.forEach((img, i) => {
+      const direct = img.dataset.final;    // 캐시 있음 → 즉시
+      const endpoint = img.dataset.fetch;  // 캐시 없음 → API
+
+      if (direct) { setWithFallback(img, direct); return; }
+      if (!endpoint) return;
+
+      setTimeout(() => {
+        fetch(endpoint, { cache: 'no-store' })
+          .then(r => r.ok ? r.json() : Promise.reject())
+          .then(d => {
+            // ✅ url 없으면 src 안 건드림 => 기본이미지 유지
+            if (d && d.url) setWithFallback(img, d.url);
+          })
+          .catch(() => {});
+      }, i * 120);
+    });
+  }
 
   /* =========================
    * B) 무한 캐러셀 구성
@@ -81,7 +94,7 @@
   originalCards.slice().reverse().forEach(card => fragHead.insertBefore(card.cloneNode(true), fragHead.firstChild));
   track.insertBefore(fragHead, track.firstChild);
   track.appendChild(fragTail);
-
+  hydrateImages(track);
   // 2) 인덱스/참조 갱신
   function allCards(){ return Array.from(track.querySelectorAll('.cc_card')); }
   let cards = allCards();

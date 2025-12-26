@@ -10,6 +10,11 @@
   display: flex;
   flex-direction: column;    /* 위: header, 중간: 컨텐츠, 아래: footer */
 }
+#reference-wrap.auth-page .reference-middle-section,
+#reference-wrap.auth-page .reference-right-section,
+#reference-wrap.auth-page .reference-footer {
+  display: none;
+}
 #ref-main {
   flex: 1;                         /* 남은 높이를 모두 차지 */
   display: flex;
@@ -595,7 +600,7 @@ a {
 .login-img{
   display: block;
   margin: 0 auto;
-  width: 600px;
+  width: 520px;
 }
 /* 1. 로그인 영역 배경 */
 .login-page {

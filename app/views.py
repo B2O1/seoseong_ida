@@ -188,10 +188,11 @@ def _norm_key(name: str, address: str) -> str:
     a = " ".join((address or "").strip().lower().split())
     return f"{n} | {a}"
 
-
 def _fetch_place_photo_ref(cafe, GOOGLE_API_KEY):
     """TextSearch → 후보 스코어링 → Details 로 첫 번째 photo_reference 반환"""
-    name = (getattr(cafe, "crawled_store_name", None) or getattr(cafe, "public_store_name", None) or "").strip()
+    name = (getattr(cafe, "crawled_store_name", None)
+            or getattr(cafe, "public_store_name", None)
+            or "").strip()
     addr = (getattr(cafe, "address", "") or "").strip()
     q = f"{name} {addr}".strip()
 
@@ -201,8 +202,15 @@ def _fetch_place_photo_ref(cafe, GOOGLE_API_KEY):
     if lat and lng:
         params.update({"location": f"{lat},{lng}", "radius": 1200})
 
-    sr = requests.get("https://maps.googleapis.com/maps/api/place/textsearch/json",
-                      params=params, timeout=8).json()
+    sr = requests.get(
+        "https://maps.googleapis.com/maps/api/place/textsearch/json",
+        params=params,
+        timeout=8
+    ).json()
+
+    print("TEXTSEARCH status:", sr.get("status"), sr.get("error_message"))
+    print("TEXTSEARCH results:", len(sr.get("results", [])))
+
     results = sr.get("results", [])
     if not results:
         return None, None, None, None
@@ -213,21 +221,27 @@ def _fetch_place_photo_ref(cafe, GOOGLE_API_KEY):
             R = 6371000.0
             dlat = radians(b_lat - a_lat)
             dlng = radians(b_lng - a_lng)
-            aa = sin(dlat / 2) ** 2 + cos(radians(a_lat)) * cos(radians(b_lat)) * sin(dlng / 2) ** 2
+            aa = (sin(dlat / 2) ** 2
+                  + cos(radians(a_lat)) * cos(radians(b_lat))
+                  * sin(dlng / 2) ** 2)
             return 2 * R * asin(sqrt(aa))
         except Exception:
             return None
 
     tname = name.lower()
     best, best_score = None, -1
+
     for it in results:
         score = 0
         nm = (it.get("name") or "").lower()
+
         if tname and tname in nm:
             score += 3
+
         types = it.get("types", [])
         if "cafe" in types or "coffee_shop" in types:
             score += 3
+
         if lat and lng and it.get("geometry", {}).get("location"):
             p = it["geometry"]["location"]
             d = _dist(float(lat), float(lng), p.get("lat"), p.get("lng"))
@@ -236,6 +250,7 @@ def _fetch_place_photo_ref(cafe, GOOGLE_API_KEY):
                     score += 3
                 elif d <= 1000:
                     score += 1
+
         if score > best_score:
             best_score, best = score, it
 
@@ -243,17 +258,26 @@ def _fetch_place_photo_ref(cafe, GOOGLE_API_KEY):
     if not place_id:
         return None, None, None, None
 
-    dr = requests.get("https://maps.googleapis.com/maps/api/place/details/json",
-                      params={"place_id": place_id, "fields": "photos",
-                              "language": "ko", "key": GOOGLE_API_KEY},
-                      timeout=8).json()
+    dr = requests.get(
+        "https://maps.googleapis.com/maps/api/place/details/json",
+        params={
+            "place_id": place_id,
+            "fields": "photos",
+            "language": "ko",
+            "key": GOOGLE_API_KEY
+        },
+        timeout=8
+    ).json()
+
+    print("DETAILS status:", dr.get("status"), dr.get("error_message"))
+    print("DETAILS photos:", len((dr.get("result", {}).get("photos") or [])))
+
     photos = dr.get("result", {}).get("photos") or []
     if not photos:
         return place_id, None, None, None
 
     ph = photos[0]
     return place_id, ph.get("photo_reference"), ph.get("width"), ph.get("height")
-
 
 def get_place_photo_url_with_cache(cafe, GOOGLE_API_KEY):
     name = (getattr(cafe, "crawled_store_name", None) or getattr(cafe, "public_store_name", None) or "").strip()
@@ -301,7 +325,7 @@ def home(request):
 
     all_recommended = []
     for field in flag_fields:
-        cafes = DfCafeFull.objects.filter(**{field: 1}).order_by('?')[:1]
+        cafes = DfCafeFull.objects.filter(**{field: 1}).order_by('?')[:2]
         all_recommended.extend(cafes)
 
     random.shuffle(all_recommended)
@@ -315,6 +339,7 @@ def home(request):
 # 3) 클라이언트가 나중에 사진 요청하는 API
 @require_GET
 def cafe_photo_api(request, cafe_id):
+    # print("KEY:", settings.GOOGLE_API_KEY)
     cafe = get_object_or_404(DfCafeFull, pk=cafe_id)
     # 캐시 미스일 때만 내부에서 Google 호출 (이미 너의 파일에 있는 함수 재사용)
     url = get_place_photo_url_with_cache(cafe, settings.GOOGLE_API_KEY)

@@ -5,7 +5,7 @@
     {% load static %} {% load tz %}
     <link rel="stylesheet" href="{% static 'css/total.css' %}" />
   </head>
-  <body id="reference-wrap">
+  <body id="reference-wrap" class="{% block body_class %}{% endblock %}">
     <section class="reference-header">
       <div class="reference-left-section">
         <a href="/" class="reference-header-title">서성이다</a>
