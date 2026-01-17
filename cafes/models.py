@@ -45,7 +45,7 @@ class DfCafeFull(models.Model):
     # google_photo_id = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'df_cafe_full'
 
 class CafePhotoCache(models.Model):
