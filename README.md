@@ -20,7 +20,7 @@
 ## 2. 팀원 소개
 |김혜원|박찬우|변해민|
 |---|---|---|
-|사진|![Image](https://github.com/user-attachments/assets/222eff0a-7a2a-455a-b4c0-50f011eccd56)|사진|
+|<img src="https://github.com/user-attachments/assets/d7291d18-0273-4dac-8534-f9ab4db600e9" width="200px">|<img src="https://github.com/user-attachments/assets/222eff0a-7a2a-455a-b4c0-50f011eccd56" width="200px">|<img src="https://github.com/user-attachments/assets/9e806ae6-bb59-4d18-afd0-4126f97c12e8" width="200px">|
 
 ## 3. 프로젝트 기간 및 수행 내용
 |기간|수행 내용|
